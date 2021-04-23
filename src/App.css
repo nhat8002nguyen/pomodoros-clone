@@ -1,38 +1,135 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+:root {
+  --workColor: #f25b50;
+  --shortBreakColor: green;
+  --longBreakColor: blue;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  background-color: var(--workColor);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: auto;
+}
+
+/* header */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.header-btn-group {
+  display: flex;
+  flex-direction: row;
+}
+
+.title {
+  font-size: 1.5rem;
+}
+
+.header-btn {
+  margin-right: 20px;
+  border: 1px solid white;
+  width: 100px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.header-line {
+  margin-top: 10px;
+  border: 1px solid white;
+}
+
+/* Main style */
+
+.main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 50px;
+}
+
+.time-type-area {
+  width: 400px;
+  height: 300px;
+  background-color: #f06e65;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 30px;
+  border-radius: 10px;
+}
+
+.time-type-group {
+  display: flex;
+  gap: 20px;
+}
+
+.time-type-box {
+  width: 110px;
+  height: 30px;
+  background-color: #d44339;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+.time-run {
+  width: 200px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 120px;
+  margin-top: 20px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.affect-time-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.toggle-time-btn {
+  width: 100px;
+  height: 50px;
+  background-color: white;
+  color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  border-radius: 10px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+.skip-next-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
