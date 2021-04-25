@@ -7,10 +7,10 @@ export default function Main() {
   const [time, setTime] = useState(5);
   const [timeRun, setTimeRun] = useState("");
   const [numPomo, setNumPomo] = useState(1);
+  const [midAreaColor, setMidAreaColor] = useState("#f06e65");
 
   const onStartTime = () => {
     setRunState(true);
-    triggerTime();
   };
 
   let triggerTime = () =>
@@ -19,6 +19,14 @@ export default function Main() {
         setTime((prev) => prev - 1);
       }, 1000)
     );
+
+  useEffect(() => {
+    if (runState === true) {
+      triggerTime();
+    } else {
+      clearInterval(timeRun);
+    }
+  }, [runState]);
 
   useEffect(() => {
     console.log(time);
@@ -30,33 +38,62 @@ export default function Main() {
   }, [time]);
 
   useEffect(() => {
-    if (timeType === "Short Break") setTime(3);
-    else if (timeType === "Pomodoros") setTime(5);
-    else setTime(10);
-    setNumPomo((prev) => (prev === 4 ? 0 : prev + 1));
+    setTimeEachType();
     if (runState === true) triggerTime();
     chageBodyBackgroundColor();
   }, [timeType]);
 
+  const setTimeEachType = () => {
+    if (timeType === "Short Break") setTime(3);
+    else if (timeType === "Pomodoros") setTime(10);
+    else setTime(5);
+  };
+
   const chageBodyBackgroundColor = () => {
     document.body.style.backgroundColor =
-      (timeType === "Short Break" && "green") ||
+      (timeType === "Short Break" && "#16a82e") ||
       (timeType === "Pomodoros" && "#f25b50") ||
-      (timeType === "Long Break" && "blue");
+      (timeType === "Long Break" && "#1e5dd4");
   };
 
   const changeTimeType = () => {
-    setTimeType(numPomo < 4 ? "Short Break" : "Long Break");
     let newType;
-    if (timeType === "Pomodoros" && numPomo < 4) newType = "Short Break";
-    else if (timeType === "Pomodoros" && numPomo === 4) newType = "Long Break";
-    else newType = "Pomodoros";
+    if (timeType === "Pomodoros" && numPomo < 4) {
+      newType = "Short Break";
+      setNumPomo((prev) => prev + 1);
+      setMidAreaColor("#54bf66");
+    } else if (timeType === "Pomodoros" && numPomo === 4) {
+      newType = "Long Break";
+      setNumPomo(1);
+      setMidAreaColor("#5a84d1");
+    } else {
+      newType = "Pomodoros";
+      setNumPomo(1);
+      setMidAreaColor("#f06e65");
+    }
     setTimeType(newType);
   };
 
   const onStopTime = () => {
     setRunState(false);
-    clearInterval(timeRun);
+  };
+
+  const onMoveToPomo = () => {
+    setTimeType("Pomodoros");
+    setMidAreaColor("#f06e65");
+    onStopTime();
+  };
+
+  const onMoveToShortBreak = () => {
+    setTimeType("Short Break");
+    setMidAreaColor("#54bf66");
+    onStopTime();
+  };
+
+  const onMoveToLongBreak = () => {
+    setTimeType("Long Break");
+    setMidAreaColor("#5a84d1");
+    onStopTime();
   };
 
   const secondsToMinutes = (seconds) => {
@@ -71,13 +108,14 @@ export default function Main() {
 
   return (
     <div className="main-container">
-      <div className="time-type-area">
+      <div className="time-type-area" style={{ backgroundColor: midAreaColor }}>
         <div className="time-type-group">
           <div
             className="time-type-box"
             style={
               timeType !== "Pomodoros" ? { backgroundColor: "#f06e65" } : null
             }
+            onClick={onMoveToPomo}
           >
             <text>Pomodoros</text>
           </div>
@@ -86,6 +124,7 @@ export default function Main() {
             style={
               timeType !== "Short Break" ? { backgroundColor: "#f06e65" } : null
             }
+            onClick={onMoveToShortBreak}
           >
             <text>Short Break</text>
           </div>
@@ -94,6 +133,7 @@ export default function Main() {
             style={
               timeType !== "Long Break" ? { backgroundColor: "#f06e65" } : null
             }
+            onClick={onMoveToLongBreak}
           >
             <text>Long Beak</text>
           </div>
