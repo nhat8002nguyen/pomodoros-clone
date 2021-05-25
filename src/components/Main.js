@@ -20,6 +20,7 @@ export default function Main() {
       }, 1000)
     );
 
+  // start time or stop time
   useEffect(() => {
     if (runState === true) {
       triggerTime();
@@ -29,11 +30,10 @@ export default function Main() {
   }, [runState]);
 
   useEffect(() => {
-    console.log(time);
     // when time = -1 for a bit delay before move to next time type
     if (time === -1) {
       clearInterval(timeRun);
-      changeTimeType();
+      changeNextTimeType();
     }
   }, [time]);
 
@@ -45,8 +45,8 @@ export default function Main() {
 
   const setTimeEachType = () => {
     if (timeType === "Short Break") setTime(3);
-    else if (timeType === "Pomodoros") setTime(10);
-    else setTime(5);
+    else if (timeType === "Pomodoros") setTime(5);
+    else setTime(4);
   };
 
   const chageBodyBackgroundColor = () => {
@@ -56,7 +56,7 @@ export default function Main() {
       (timeType === "Long Break" && "#1e5dd4");
   };
 
-  const changeTimeType = () => {
+  const changeNextTimeType = () => {
     let newType;
     if (timeType === "Pomodoros" && numPomo < 4) {
       newType = "Short Break";
@@ -68,7 +68,6 @@ export default function Main() {
       setMidAreaColor("#5a84d1");
     } else {
       newType = "Pomodoros";
-      setNumPomo(1);
       setMidAreaColor("#f06e65");
     }
     setTimeType(newType);
@@ -78,21 +77,21 @@ export default function Main() {
     setRunState(false);
   };
 
-  const onMoveToPomo = () => {
-    setTimeType("Pomodoros");
-    setMidAreaColor("#f06e65");
-    onStopTime();
-  };
-
-  const onMoveToShortBreak = () => {
-    setTimeType("Short Break");
-    setMidAreaColor("#54bf66");
-    onStopTime();
-  };
-
-  const onMoveToLongBreak = () => {
-    setTimeType("Long Break");
-    setMidAreaColor("#5a84d1");
+  const onMoveTo = (type) => {
+    setTimeType(type);
+    switch (type) {
+      case "Pomodoros":
+        setMidAreaColor("#f06e65");
+        break;
+      case "Short Break":
+        setMidAreaColor("#54bf66");
+        break;
+      case "Long Break":
+        setMidAreaColor("#5a84d1");
+        break;
+      default:
+        setMidAreaColor("#f06e65");
+    }
     onStopTime();
   };
 
@@ -115,7 +114,7 @@ export default function Main() {
             style={
               timeType !== "Pomodoros" ? { backgroundColor: "#f06e65" } : null
             }
-            onClick={onMoveToPomo}
+            onClick={() => onMoveTo("Pomodoros")}
           >
             <text>Pomodoros</text>
           </div>
@@ -124,7 +123,7 @@ export default function Main() {
             style={
               timeType !== "Short Break" ? { backgroundColor: "#f06e65" } : null
             }
-            onClick={onMoveToShortBreak}
+            onClick={() => onMoveTo("Short Break")}
           >
             <text>Short Break</text>
           </div>
@@ -133,7 +132,7 @@ export default function Main() {
             style={
               timeType !== "Long Break" ? { backgroundColor: "#f06e65" } : null
             }
-            onClick={onMoveToLongBreak}
+            onClick={() => onMoveTo("Long Break")}
           >
             <text>Long Beak</text>
           </div>
@@ -151,7 +150,7 @@ export default function Main() {
               <text>Start</text>
             </div>
           )}
-          <div className="skip-next-btn">
+          <div className="skip-next-btn" onClick={() => changeNextTimeType()}>
             <SkipNextIcon fontSize="large" />
           </div>
         </div>

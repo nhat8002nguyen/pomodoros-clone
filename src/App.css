@@ -133,3 +133,12 @@ body {
   align-items: center;
   cursor: pointer;
 }
+
+@media only screen and (max-width: 680px) {
+  .time-type-area {
+    transform: scale(0.9);
+  }
+  .container {
+    align-items: center;
+  }
+}
