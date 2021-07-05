@@ -1,38 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 
 export default function Main() {
   const [timeType, setTimeType] = useState("Pomodoros");
   const [runState, setRunState] = useState(false);
   const [time, setTime] = useState(5);
-  const [timeRun, setTimeRun] = useState("");
   const [numPomo, setNumPomo] = useState(1);
   const [midAreaColor, setMidAreaColor] = useState("#f06e65");
+
+  const timeRun = useRef();
 
   const onStartTime = () => {
     setRunState(true);
   };
 
-  let triggerTime = () =>
-    setTimeRun(
-      setInterval(() => {
+  let triggerTime = () => {
+		clearInterval(timeRun.current);
+  	timeRun.current = setInterval(() => {
         setTime((prev) => prev - 1);
-      }, 1000)
-    );
+    }, 1000);
+	}
 
   // start time or stop time
   useEffect(() => {
     if (runState === true) {
       triggerTime();
     } else {
-      clearInterval(timeRun);
+      clearInterval(timeRun.current);
     }
   }, [runState]);
 
   useEffect(() => {
     // when time = -1 for a bit delay before move to next time type
     if (time === -1) {
-      clearInterval(timeRun);
+      clearInterval(timeRun.current);
       changeNextTimeType();
     }
   }, [time]);
