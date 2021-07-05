@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
+import { useTranslation } from "react-i18next";
 
 export default function Main() {
+	const {t, i18n } = useTranslation();
   const [timeType, setTimeType] = useState("Pomodoros");
   const [runState, setRunState] = useState(false);
   const [time, setTime] = useState(5);
@@ -126,7 +128,7 @@ export default function Main() {
             }
             onClick={() => onMoveTo("Short Break")}
           >
-            <text>Short Break</text>
+            <text>{t('short_break')}</text>
           </div>
           <div
             className="time-type-box"
@@ -135,7 +137,7 @@ export default function Main() {
             }
             onClick={() => onMoveTo("Long Break")}
           >
-            <text>Long Beak</text>
+            <text>{t('long_break')}</text>
           </div>
         </div>
         <div className="time-run">
@@ -144,11 +146,11 @@ export default function Main() {
         <div className="affect-time-group">
           {runState ? (
             <div class="toggle-time-btn" onClick={onStopTime}>
-              <text>Stop</text>
+              <text>{t('stop')}</text>
             </div>
           ) : (
             <div class="toggle-time-btn" onClick={onStartTime}>
-              <text>Start</text>
+              <text>{t('start')}</text>
             </div>
           )}
           <div className="skip-next-btn" onClick={() => changeNextTimeType()}>
