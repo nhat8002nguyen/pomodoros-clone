@@ -1,9 +1,9 @@
 import i18next from "i18next";
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Settings } from "./Settings";
 
-const Header = () => {
-	const [setttingsVisible, setSettingsVisible] = useState(false);
+const Header = ({ onOpenSetting }) => {
 	const { t, i18n } = useTranslation();
 	const [language, setLanguage] = useState(i18n.language);
 	
@@ -20,16 +20,19 @@ const Header = () => {
 
   return (
     <div className="header">
-      <text className="title">pomodoros</text>
+      <p className="title">pomodoros</p>
       <div className="header-btn-group">
-        <div className="header-btn" onClick={() => setSettingsVisible(true)}>
-          <text>{t('settings')}</text>
-        </div>
+				<Settings triggerButton={
+					<div className="header-btn" onClick={() => onOpenSetting()}>
+						<p>{t('settings')}</p>
+					</div>
+				}/>
+        
         <div className="header-btn">
-          <text>{t('profile')}</text>
+          <p>{t('profile')}</p>
         </div>
         <div className="header-btn" onClick={() => toggleLanguage()}>
-          <text>{language}</text>
+          <p>{language}</p>
         </div>
       </div>
     </div>
