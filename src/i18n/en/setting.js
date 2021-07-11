@@ -1,5 +1,5 @@
 export const setting = {
-	"timer_setting": "time_setting",
+	"timer_setting": "TIMER SETTING",
 	"time": "time",
 	"minutes": "minutes",
 	"auto_start_breaks": "Auto start Pomodoros",
@@ -10,4 +10,5 @@ export const setting = {
 	"ticking_sound": "Ticking Sound",
 	"dark_mode_when_running": "Dark Mode When running",
 	"notification": "Notification",
+	"ok": "OK"
 }

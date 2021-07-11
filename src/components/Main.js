@@ -16,12 +16,7 @@ export default function Main() {
     setRunState(true);
   };
 
-  let triggerTime = () => {
-		clearInterval(timeRun.current);
-  	timeRun.current = setInterval(() => {
-        setTime((prev) => prev - 1);
-    }, 1000);
-	}
+  
 
   // start time or stop time
   useEffect(() => {
@@ -32,6 +27,13 @@ export default function Main() {
     }
   }, [runState]);
 
+	let triggerTime = () => {
+		clearInterval(timeRun.current);
+  	timeRun.current = setInterval(() => {
+        setTime((prev) => prev - 1);
+    }, 1000);
+	}
+
   useEffect(() => {
     // when time = -1 for a bit delay before move to next time type
     if (time === -1) {
@@ -40,26 +42,7 @@ export default function Main() {
     }
   }, [time]);
 
-  useEffect(() => {
-    setTimeEachType();
-    if (runState === true) triggerTime();
-    chageBodyBackgroundColor();
-  }, [timeType]);
-
-  const setTimeEachType = () => {
-    if (timeType === "Short Break") setTime(3);
-    else if (timeType === "Pomodoros") setTime(5);
-    else setTime(4);
-  };
-
-  const chageBodyBackgroundColor = () => {
-    document.body.style.backgroundColor =
-      (timeType === "Short Break" && "#16a82e") ||
-      (timeType === "Pomodoros" && "#f25b50") ||
-      (timeType === "Long Break" && "#1e5dd4");
-  };
-
-  const changeNextTimeType = () => {
+	const changeNextTimeType = () => {
     let newType;
     if (timeType === "Pomodoros" && numPomo < 4) {
       newType = "Short Break";
@@ -76,26 +59,43 @@ export default function Main() {
     setTimeType(newType);
   };
 
-  const onStopTime = () => {
-    setRunState(false);
+  useEffect(() => {
+    resetTimeEachType();
+    if (runState === true) triggerTime();
+    chageBodyBackgroundColor();
+  }, [timeType]);
+
+  const resetTimeEachType = () => {
+    if (timeType === "Short Break") setTime(3);
+    else if (timeType === "Pomodoros") setTime(5);
+    else setTime(4);
+  };
+
+  const chageBodyBackgroundColor = () => {
+    document.body.style.backgroundColor =
+      (timeType === "Short Break" && "#16a82e") ||
+      (timeType === "Pomodoros" && "#f25b50") ||
+      (timeType === "Long Break" && "#1e5dd4");
   };
 
   const onMoveTo = (type) => {
+		timeType === type && resetTimeEachType();
     setTimeType(type);
-    switch (type) {
-      case "Pomodoros":
-        setMidAreaColor("#f06e65");
-        break;
-      case "Short Break":
-        setMidAreaColor("#54bf66");
-        break;
-      case "Long Break":
-        setMidAreaColor("#5a84d1");
-        break;
-      default:
-        setMidAreaColor("#f06e65");
-    }
+		changeMidAreaColor(type);
     onStopTime();
+  };
+
+	const changeMidAreaColor = (type) => {
+		const areaColors = {
+			"Pomodoros": "#f06e65",
+			"Short Break": "#54bf66",
+			"Long Break": "#5a84d1",
+		}
+		setMidAreaColor(areaColors[type]);
+	}
+
+	const onStopTime = () => {
+    setRunState(false);
   };
 
   const secondsToMinutes = (seconds) => {
@@ -119,7 +119,7 @@ export default function Main() {
             }
             onClick={() => onMoveTo("Pomodoros")}
           >
-            <text>Pomodoros</text>
+            <p>Pomodoros</p>
           </div>
           <div
             className="time-type-box"
@@ -128,7 +128,7 @@ export default function Main() {
             }
             onClick={() => onMoveTo("Short Break")}
           >
-            <text>{t('short_break')}</text>
+            <p>{t('short_break')}</p>
           </div>
           <div
             className="time-type-box"
@@ -137,20 +137,20 @@ export default function Main() {
             }
             onClick={() => onMoveTo("Long Break")}
           >
-            <text>{t('long_break')}</text>
+            <p>{t('long_break')}</p>
           </div>
         </div>
         <div className="time-run">
-          <text>{secondsToMinutes(time)}</text>
+          <p>{secondsToMinutes(time)}</p>
         </div>
         <div className="affect-time-group">
           {runState ? (
-            <div class="toggle-time-btn" onClick={onStopTime}>
-              <text>{t('stop')}</text>
+            <div className="toggle-time-btn" onClick={onStopTime}>
+              <p>{t('stop')}</p>
             </div>
           ) : (
-            <div class="toggle-time-btn" onClick={onStartTime}>
-              <text>{t('start')}</text>
+            <div className="toggle-time-btn" onClick={onStartTime}>
+              <p>{t('start')}</p>
             </div>
           )}
           <div className="skip-next-btn" onClick={() => changeNextTimeType()}>
