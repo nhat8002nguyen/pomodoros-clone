@@ -17,6 +17,7 @@
 	--fontSizeTitle: 20px;
 	--fontSizeNormal: 16px;
 	--fontSizeSmall: 12px;
+	--fontSizeBigTitle: 3rem;
 }
 
 body {
@@ -292,6 +293,68 @@ hr {
 
 .popup-button-area button:hover {
 	opacity: 0.5;
+	cursor: pointer;
+}
+
+/* sign in  */
+.signin-container {
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	align-items: center;
+}
+
+.big-title {
+	font-size: var(--fontSizeBigTitle);
+	margin-top: 100px;
+	margin-bottom: 50px;
+	font-weight: var(--fontWeightBold);
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	width: 300px;
+	padding: 20px 20px 20px 10px;
+	gap: 30px;
+	margin-top: 10px;
+}
+
+.credential {
+	padding: 15px 10px 15px 10px;
+	border: 1px solid white;
+	border-radius: 10px;
+}
+
+.credential:focus {
+	outline: none;
+}
+
+.signin-btn {
+	margin-top: 10px;
+	font-weight: var(--fontWeightBold);
+}
+
+.signin-btn:hover {
+	cursor: pointer;
+	position: relative;
+	bottom: 2px;
+	color: var(--workColor);
+}
+
+.row {
+	display: flex;
+	gap: 20px;
+	font-size: var(--fontSizeSmall);
+}
+
+.signup-link {
+	text-decoration: underline;
+}
+
+.signup-link:hover {
 	cursor: pointer;
 }
 

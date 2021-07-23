@@ -29,7 +29,7 @@ const Header = ({ onOpenSetting }) => {
 				}/>
         
         <div className="header-btn">
-          <p>{t('profile')}</p>
+          <p>{t('signIn')}</p>
         </div>
         <div className="header-btn" onClick={() => toggleLanguage()}>
           <p>{language}</p>

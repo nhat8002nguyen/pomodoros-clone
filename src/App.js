@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
+import { SignIn } from "./components/auth/SignIn";
+import { SignUp } from "./components/auth/SignUp";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import { Settings } from "./components/Settings";
@@ -13,10 +15,11 @@ const App = () => {
 
   return (
     <div className="container">
-			<Header onOpenSetting={openSetting}/>
+			{/* <Header onOpenSetting={openSetting}/>
 			<div className="header-line"></div>
 			<Main />
-			{isSettingOpen && <Settings onClosePopup={() => setSettingOpen(false)}/>}
+			{isSettingOpen && <Settings onClosePopup={() => setSettingOpen(false)}/>} */}
+			<SignIn />
     </div>
   );
 };
