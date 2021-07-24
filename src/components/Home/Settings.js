@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Popup from 'reactjs-popup';
 import Switch from '@material-ui/core/Switch';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 
 const timeTypes = [
@@ -85,7 +85,7 @@ export const Settings = ({triggerButton}) => {
 				<div className="popup-header">
 					<p className="popup-title">{t("timer_setting")}</p>
 					<div onClick={() => popup.current.close()}>
-						<HighlightOffIcon className="popup-exit" />
+						<CheckCircleIcon className="popup-exit" />
 					</div>
 				</div>
 				<hr></hr>

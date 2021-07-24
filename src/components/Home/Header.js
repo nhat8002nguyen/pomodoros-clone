@@ -1,11 +1,14 @@
 import i18next from "i18next";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router";
+
 import { Settings } from "./Settings";
 
 const Header = ({ onOpenSetting }) => {
 	const { t, i18n } = useTranslation();
 	const [language, setLanguage] = useState(i18n.language);
+	const history = useHistory();
 	
 	const toggleLanguage = () => {
 		const newLang = language === "vi" ? "en" : "vi";
@@ -17,6 +20,9 @@ const Header = ({ onOpenSetting }) => {
 		});
 	}
 
+	const goToSignin = () => {
+		history.push("/signin");
+	}
 
   return (
     <div className="header">
@@ -28,7 +34,7 @@ const Header = ({ onOpenSetting }) => {
 					</div>
 				}/>
         
-        <div className="header-btn">
+        <div className="header-btn" onClick={() => goToSignin()}>
           <p>{t('signIn')}</p>
         </div>
         <div className="header-btn" onClick={() => toggleLanguage()}>

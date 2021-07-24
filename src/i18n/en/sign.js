@@ -3,6 +3,7 @@ export const sign = {
 	"username": "Username",
 	"password": "Password",
 	"rePassword": "Re enter password",
+	"keepSignIn": "Keep sign in",
 	"noAccount": "No account yet ?",
 	"signUpNow": "sign up now",
 	"hadAccount": "Already have account ?"
