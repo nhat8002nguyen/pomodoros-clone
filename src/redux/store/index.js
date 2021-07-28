@@ -7,9 +7,9 @@ import { signInReducer, signUpReducer } from '../reducers/userReducers';
 
 export const configureStore = () => {
 	const getInitalState = () => {
-		const credential = Cookies.getJSON('credential');
+		const userSignin = Cookies.getJSON('credential');
 		return {
-			userSignin: { credential },
+			userSignin: { userSignin },
 		}
 	}
 

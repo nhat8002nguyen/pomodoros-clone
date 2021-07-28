@@ -27,6 +27,8 @@ export const signUpReducer = (state = {}, action) => {
 			return { loading: false, success: true, userSignup: action.payload }
 		case SIGNUP_FAIL:
 			return { loading: false, error: action.payload }
+		case LOGOUT: 
+			return { success: false }
 		default:
 			return state;
 	}

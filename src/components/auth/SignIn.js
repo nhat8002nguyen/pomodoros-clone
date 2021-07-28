@@ -43,6 +43,7 @@ export const SignIn = () => {
 	}
 
 	const handleSubmit = (e) => {
+		e.preventDefault()
 		// validate input
 		if (username.length === 0) {
 			alert("Please enter name");
@@ -54,7 +55,6 @@ export const SignIn = () => {
 		}
 
 		dispatch(signin({username, password, checked}));
-		e.preventDefault()
 	}
 
 	return (
