@@ -51,6 +51,23 @@ body {
   font-size: 1.5rem;
 }
 
+.header-menu {
+	width: 100px;
+	height: 50px;
+	background-color: white;
+	padding-top: 10px;
+	padding-left: 10px;
+}
+
+.header-logout {
+	color: black;
+	cursor: pointer;
+}
+
+.header-logout:hover {
+	color: var(--workColor);
+}
+
 .header-btn {
   margin-right: 20px;
   border: 1px solid white;

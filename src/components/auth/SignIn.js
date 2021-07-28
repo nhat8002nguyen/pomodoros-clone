@@ -1,32 +1,80 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { exitSignin, signin } from '../../redux/actions/userActions';
+
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 export const SignIn = () => {
 	const { t, i18n } = useTranslation();
 	const history = useHistory(); 
+	const dispatch = useDispatch();
+	const userSignin = useSelector(state => state.userSignin);
+	const { loading, error, success } = userSignin;
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [disabled, setDisabled] = useState(false);
+	const [checked, setChecked] = useState(false);
+
+	useEffect(() => {
+		setDisabled(username.length > 0 && password.length > 0 ? false: true);
+	}, [username, password])
+
+	useEffect(() => {
+		success && history.replace("/");
+	}, [success])
+
+	useEffect(()=> {
+		error?.includes("403") && alert(t('signInFail'));
+	},[error]);
 
 	const moveToSignUp = () => {
+		dispatch(exitSignin());
 		history.replace("/signup")
+	}
+
+	const goBack = () => {
+		dispatch(exitSignin());
+		history.goBack();
+	}
+
+	const handleSubmit = (e) => {
+		// validate input
+		if (username.length === 0) {
+			alert("Please enter name");
+			return false;
+		}
+		if (password.length === 0) {
+			alert("please enter passowrd");
+			return false;
+		}
+
+		dispatch(signin({username, password, checked}));
+		e.preventDefault()
 	}
 
 	return (
 		<div className="signin-container">
-			<div onClick={() => history.goBack()}>
+			<div onClick={() => goBack()}>
 				<ArrowBackIcon className="back-btn"/>
 			</div>
 			<p className="big-title">Pomodoros</p>
 			<p className="title">{t('signIn')}</p>
-			<form>
-				<input type="input" className="credential" placeholder={t("username")}></input>
-				<input type="password" className="credential" placeholder={t("password")}></input>
+			<form onSubmit={(e) => handleSubmit(e)}>
+				<input type="input" className="credential" placeholder={t("username")} 
+					onChange={(e) => setUsername(e.target.value)}></input>
+				<input type="password" className="credential" placeholder={t("password")}
+					onChange={(e) => setPassword(e.target.value)}></input>
 				<div className="row keep-signin">
-					<input type="checkbox" value="duy tri" ></input>
+					<input type="checkbox" checked={checked} onChange={() => setChecked(!checked)} value="duy tri" ></input>
 					<p>{t("keepSignIn")}</p>
 				</div>
-				<input type="submit" className="credential signin-btn" value={t("signIn")}></input>
+				{!loading ? <input type="submit" disabled={disabled} className="credential signin-btn" value={t("signIn")}></input>
+				:<CircularProgress style={{margin: "auto", color: "white"}} size={30}/>}
 				<div className="row">
 					<p>{t("noAccount")}</p>
 					<p onClick={() => moveToSignUp()} className="signup-link">{t("signUpNow")}</p>
