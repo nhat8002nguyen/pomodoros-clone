@@ -3,7 +3,7 @@ import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
 
 export default function Main() {
-	const {t, i18n } = useTranslation();
+	const {t } = useTranslation();
   const [timeType, setTimeType] = useState("Pomodoros");
   const [runState, setRunState] = useState(false);
   const [time, setTime] = useState(5);
