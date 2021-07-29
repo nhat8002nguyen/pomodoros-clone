@@ -10,7 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 export const SignIn = () => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const history = useHistory(); 
 	const dispatch = useDispatch();
 	const userSignin = useSelector(state => state.userSignin);
@@ -26,11 +26,11 @@ export const SignIn = () => {
 
 	useEffect(() => {
 		success && history.replace("/");
-	}, [success])
+	}, [success, history])
 
 	useEffect(()=> {
 		error?.includes("403") && alert(t('signInFail'));
-	},[error]);
+	},[error, t]);
 
 	const moveToSignUp = () => {
 		dispatch(exitSignin());

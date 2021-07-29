@@ -32,7 +32,7 @@ const notifyTypes = [
 ]
 
 export const Settings = ({triggerButton}) => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const [pomoMinutes, setPomoMinutes] = useState(0);
 	const [shortMinutes, setShortMinutes] = useState(0);
 	const [longMinutes, setLongMinutes] = useState(0);

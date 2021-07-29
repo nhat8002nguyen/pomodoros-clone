@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import { signin, signup } from '../../redux/actions/userActions';
+import { signup } from '../../redux/actions/userActions';
 
 
 export const SignUp = () => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const { success } = useSelector(state => state.userSignup);
@@ -29,7 +29,7 @@ export const SignUp = () => {
 		if (success) {
 			history.replace("/signin");
 		} 
-	}, [success]);
+	}, [success, history]);
 
 	const moveToSignIn = () => {
 		history.replace("/signin");

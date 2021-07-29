@@ -21,8 +21,8 @@ const Header = ({ onOpenSetting }) => {
 	const { userSignin, success } = useSelector(state => state.userSignin);
 
 	useEffect(() => {
-		const { username, token } = Cookies.getJSON('credential');
-		if (token?.includes('Bearer')) {
+		if (Cookies.getJSON('credential')?.token != null) {
+			const { username } = Cookies.getJSON('credential');
 			const name = username;
 			setUsername(name);
 			setSignedIn(true);
@@ -33,7 +33,7 @@ const Header = ({ onOpenSetting }) => {
 	},[userSignin])
 
 	useEffect(() => {
-		const { token } = Cookies.getJSON('credential');
+		const token = Cookies.getJSON('credential')?.token;
 		(!success && !token?.includes('Bearer')) && setSignedIn(false);
 	},[success])
 	

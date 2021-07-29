@@ -5,7 +5,7 @@ export const myAxios = (() => {
 	const authToken = Cookies.get('auth-token');
 
 	const instance = axios.create({
-		baseURL: "http://localhost:8080",
+		baseURL: process.env.REACT_APP_API_URL,
 	});
 
 	if (authToken) instance.defaults.headers.common['Authorization'] = authToken; 
