@@ -20,6 +20,7 @@ const Header = ({ onOpenSetting }) => {
 
 	const { userSignin, success } = useSelector(state => state.userSignin);
 
+	// check if keep signin is checked
 	useEffect(() => {
 		if (Cookies.getJSON('credential')?.token != null) {
 			const { username } = Cookies.getJSON('credential');

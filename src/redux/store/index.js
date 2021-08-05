@@ -3,6 +3,7 @@ import thunkMiddleware from 'redux-thunk';
 import Cookies from "js-cookie";
 
 import { signInReducer, signUpReducer } from '../reducers/userReducers';
+import { getSettingReducer } from '../reducers/settingReducers';
 
 
 export const configureStore = () => {
@@ -17,6 +18,7 @@ export const configureStore = () => {
 	const reducers =  combineReducers({
 		userSignin: signInReducer,
 		userSignup: signUpReducer,
+		settingState: getSettingReducer,
 	});
 	const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 

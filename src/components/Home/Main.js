@@ -2,8 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
 
-export default function Main() {
-	const {t } = useTranslation();
+export default function Main({setting}) {
+	const { t } = useTranslation();
+	const [pomodoro, setPomodoro] = useState(3);
+	const [shortBreak, setShortBreak] = useState(3);
+	const [longBreak, setLongBreak] = useState(3);
+	const [longBreakInterval, setLongBreakInterval] = useState(2);
   const [timeType, setTimeType] = useState("Pomodoros");
   const [runState, setRunState] = useState(false);
   const [time, setTime] = useState(5);
@@ -12,11 +16,19 @@ export default function Main() {
 
   const timeRun = useRef();
 
+	// get time data from setting api
+	useEffect(() => {
+		if (setting && Object.keys(setting).length > 0) {
+			setPomodoro(setting.pomodoro*60);
+			setShortBreak(setting.shortBreak*60);
+			setLongBreak(setting.longBreak*60);
+			setLongBreakInterval(setting.longBreakInterval);
+		}
+	}, [setting])
+	
   const onStartTime = () => {
     setRunState(true);
   };
-
-  
 
   // start time or stop time
   useEffect(() => {
@@ -40,15 +52,15 @@ export default function Main() {
       clearInterval(timeRun.current);
       changeNextTimeType();
     }
-  }, [time]);
+  }, [time, longBreakInterval]);
 
 	const changeNextTimeType = () => {
     let newType;
-    if (timeType === "Pomodoros" && numPomo < 4) {
+    if (timeType === "Pomodoros" && numPomo < longBreakInterval) {
       newType = "Short Break";
       setNumPomo((prev) => prev + 1);
       setMidAreaColor("#54bf66");
-    } else if (timeType === "Pomodoros" && numPomo === 4) {
+    } else if (timeType === "Pomodoros" && numPomo === longBreakInterval) {
       newType = "Long Break";
       setNumPomo(1);
       setMidAreaColor("#5a84d1");
@@ -63,12 +75,12 @@ export default function Main() {
     resetTimeEachType();
     if (runState === true) triggerTime();
     chageBodyBackgroundColor();
-  }, [timeType]);
+  }, [timeType, pomodoro, shortBreak, longBreak]);
 
   const resetTimeEachType = () => {
-    if (timeType === "Short Break") setTime(3);
-    else if (timeType === "Pomodoros") setTime(5);
-    else setTime(4);
+    if (timeType === "Short Break") setTime(shortBreak);
+    else if (timeType === "Pomodoros") setTime(pomodoro);
+    else setTime(longBreak);
   };
 
   const chageBodyBackgroundColor = () => {

@@ -1,6 +1,6 @@
 import { SIGNIN_REQUEST, SIGNIN_FAIL, SIGNIN_SUCCESS, 
 	LOGOUT, SIGNIN_EXIT, SIGNUP_SUCCESS, SIGNUP_FAIL, SIGNUP_REQUEST} from "../constants/userConstants" 
-import { myAxios } from "../../utils/axios"
+import { MyAxios } from "../../utils/Axios"
 import Cookies from "js-cookie"
 
 export const exitSignin = () => async (dispatch) => {
@@ -10,7 +10,8 @@ export const exitSignin = () => async (dispatch) => {
 export const signin = ({username, password, checked}) => async (dispatch) => {
 	dispatch({type: SIGNIN_REQUEST})
 	try {
-		const response = await myAxios.post("/login", {name: username, password});
+		const axios = MyAxios();
+		const response = await axios.post("/api/login", {name: username, password});
 		const data = response.data;
 		if (data && checked) {
 			Cookies.set('credential', JSON.stringify({username, password, token: data}));
@@ -24,7 +25,8 @@ export const signin = ({username, password, checked}) => async (dispatch) => {
 export const signup = ({email, username, password}) => async (dispatch) => {
 	dispatch({type: SIGNUP_REQUEST})
 	try {
-		const { data } = await myAxios.post("/api/user/register", null, {params: {email, username, password}});
+		const axios = MyAxios();
+		const { data } = await axios.post("/api/register", {gmail: email, name: username, password: password});
 		dispatch({type: SIGNUP_SUCCESS, payload: data});
 	} catch (err) {
 		dispatch({type: SIGNUP_FAIL, payload: err.message});

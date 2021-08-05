@@ -59,13 +59,13 @@ export const SignUp = () => {
 			<p className="title">{t('signUp')}</p>
 			<form onSubmit={(e) => handleSubmit(e)}>
 				<input type="email" className="credential" placeholder={t("email")}
-					onChange={(e) => setEmail(e.target.value)}></input>
+					onChange={(e) => setEmail(e.target.value.trim())}></input>
 				<input type="input" className="credential" placeholder={t("username")}
-					onChange={(e) => setUsername(e.target.value)}></input>
+					onChange={(e) => setUsername(e.target.value.trim())}></input>
 				<input type="password" className="credential" placeholder={t("password")}
-					onChange={(e) => setPassword(e.target.value)}></input>
+					onChange={(e) => setPassword(e.target.value.trim())}></input>
 				<input type="password" className="credential" placeholder={t("rePassword")}
-					onChange={(e) => setRePassword(e.target.value)}></input>
+					onChange={(e) => setRePassword(e.target.value.trim())}></input>
 				<input type="submit" disabled={disabled} className="credential signin-btn" value={t("signUp")}></input>
 				<div className="row">
 					<p>{t("hadAccount")}</p>
