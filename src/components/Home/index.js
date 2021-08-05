@@ -33,11 +33,9 @@ export const Home = () => {
 			:<div>
 				<Header onOpenSetting={openSetting}/>
 				<div className="header-line"></div>
-				{isSettingOpen && <Settings onClosePopup={() => setSettingOpen(false)}/>}
+				{isSettingOpen && <Settings setting={setting}/>}
 				<Main setting={setting}/>
 			</div>}
 		</div>
-
-
 	)
 }

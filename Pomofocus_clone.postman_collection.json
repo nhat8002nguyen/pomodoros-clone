@@ -1,0 +1,521 @@
+{
+	"info": {
+		"_postman_id": "1e88411c-4f46-439f-91ec-e0a454ea1049",
+		"name": "Pomofocus_clone",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gmail\": \"1244@gmail.com\",\r\n    \"name\": \"user1\",\r\n    \"password\": \"user1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"register"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "1234@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "Nathan",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "qwerty",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"some\",\r\n    \"password\": \"qwerty\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get user list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/users?_embedded.users.name=some",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "_embedded.users.name",
+									"value": "some"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJTb21lIiwiZXhwIjoxNjI4ODY4MTYxfQ.9EQGGTMSuOucp_ofYcYg_JZ_1duag-Pw66eon10UC13Ba2D12YBz-jFhjpKa9po2305LRnQq1cqhf5BFUyTrNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/users/38",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"38"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/uri-list",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users/35",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"35"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set association",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/uri-list",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "http://localhost:8080/api/settings/33"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users/35/userSetting",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"35",
+								"userSetting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user setting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/users/35/userSetting",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"35",
+								"userSetting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJTb21lIiwiZXhwIjoxNjI4ODY4MTYxfQ.9EQGGTMSuOucp_ofYcYg_JZ_1duag-Pw66eon10UC13Ba2D12YBz-jFhjpKa9po2305LRnQq1cqhf5BFUyTrNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/user?name=user1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "user1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "setting",
+			"item": [
+				{
+					"name": "create new setting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJTb21lIiwiZXhwIjoxNjI4ODYzMDk5fQ.tb12in2fn29Lca2ScGrU7m2ROESIrAQ9nXsMlogbvJotJJ-usLLoRt64tCZSG2tGQ0ih2IwM7zWdhnM8ReEMXQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/settings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get setting list",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/settings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user of setting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/settings/33/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"settings",
+								"33",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get setting ",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pomodoro\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/settings/33",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"settings",
+								"33"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update setting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQZXRlciIsImV4cCI6MTYyODU5MDc4Nn0.xSnhIexbxVrtt1yKJ8u208UrxE_rOlGbv-PxAtbuVaPIkFE0h5uQZA6URtgbpLOsjHABzAYlloMevZZb4BFDcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pomodoro\": 35\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/settings/37",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"settings",
+								"37"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

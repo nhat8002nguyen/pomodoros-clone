@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import Popup from 'reactjs-popup';
 import Switch from '@material-ui/core/Switch';
@@ -6,9 +7,9 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 
 const timeTypes = [
-	{ id: 1, name: "Pomodoros", value: "25" },
-	{ id: 2, name: "shortBreak", value: "5" },
-	{ id: 3, name: "longBreak", value: "15" },
+	{ id: 1, name: "Pomodoros", value: 20 },
+	{ id: 2, name: "shortBreak", value: 5 },
+	{ id: 3, name: "longBreak", value: 15 },
 ];
 
 const alarmSounds = [
@@ -33,29 +34,40 @@ const notifyTypes = [
 
 export const Settings = ({triggerButton}) => {
 	const { t } = useTranslation();
-	const [pomoMinutes, setPomoMinutes] = useState(0);
-	const [shortMinutes, setShortMinutes] = useState(0);
-	const [longMinutes, setLongMinutes] = useState(0);
-	const [autoStartBreaks, setAutoStartBreaks] = useState(true);
+	const settingState = useSelector(state => state.settingState);
+	const { setting } = settingState;
+
+	const [pomoMinutes, setPomoMinutes] = useState(timeTypes[0].value);
+	const [shortMinutes, setShortMinutes] = useState(timeTypes[1].value);
+	const [longMinutes, setLongMinutes] = useState(timeTypes[2].value);
+	const [autoStartBreaks, setAutoStartBreaks] = useState(false);
 	const [autoStartPomo, setAutoStartPomo] = useState(true);
 	const [longBreakInterval, setLongBreakInterval] = useState(4);
-	const [alarmVolumn, setAlarmVolumn] = useState(39);
+	const [alarmVolume, setAlarmVolume] = useState(39);
 	const [alarmRepeat, setAlarmRepeat] = useState(1);
-	const [tickingVolumn, setTickingVolumn] = useState(50);
+	const [tickingVolume, setTickingVolume] = useState(50);
 	const [darkMode, setDarkMode] = useState(false);
+	const [notificationMode, setNotificationMode] = useState("Last");
+	const [notificationMinutes, setNotificationMinutes] = useState(2);
 
 	const popup = useRef();
-
+	
 	useEffect(() => {
-		const getData = () => {
-			setPomoMinutes(timeTypes[0].value);
-			setShortMinutes(timeTypes[1].value);
-			setLongMinutes(timeTypes[2].value);
+		if (setting && Object.keys(setting).length > 0) {
+			setPomoMinutes(setting.pomodoro);
+			setShortMinutes(setting.shortBreak);
+			setLongMinutes(setting.longBreak);
+			setAutoStartBreaks(setting.autoStartBreak);
+			setAutoStartPomo(setting.autoStartPomodoro);
+			setLongBreakInterval(setting.longBreakInterval);
+			setAlarmVolume(setting.alarmVolume);
+			setAlarmRepeat(setting.alarmRepeat);
+			setTickingVolume(setting.tickingVolume);
+			setDarkMode(setting.darkMode);
+			setNotificationMode(setting.notificationMode);
+			setNotificationMinutes(setting.notificationMinutes);
 		}
-
-		getData();
-	},[])
-
+	},[setting]);
 
 	const toggleStartBreaks = (event) => {
 		setAutoStartBreaks(event.target.checked);
@@ -95,17 +107,17 @@ export const Settings = ({triggerButton}) => {
 						<div className="popup-time-box">
 							<p className="popup-time-input-label">{t("pomodoros")}</p>
 							<input type="number" value={pomoMinutes} placeholder={0} min={0}
-							onChange={(e) => setPomoMinutes(e.target.value)} className="popup-number-input"></input>
+							onChange={(e) => setPomoMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
 						</div>
 						<div className="popup-time-box">
 							<p className="popup-time-input-label">{t("short_break")}</p>
 							<input type="number" value={shortMinutes} placeholder={0} min={0}
-							onChange={(e) => setShortMinutes(e.target.value)} className="popup-number-input"></input>
+							onChange={(e) => setShortMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
 						</div>
 						<div className="popup-time-box">
 							<p className="popup-time-input-label">{t("long_break")}</p>
 							<input type="number" value={longMinutes} placeholder={0} min={0}
-							onChange={(e) => setLongMinutes(e.target.value)} className="popup-number-input"></input>
+							onChange={(e) => setLongMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
 						</div>
 					</div>
 				</div>
@@ -125,7 +137,7 @@ export const Settings = ({triggerButton}) => {
 				<div className="popup-one-line-control">
 					<p className="popup-item-title">{t("long_break_interval")}</p>
 					<input type="number" className="popup-number-input" placeholder={0} value={longBreakInterval}
-						min={0} onChange={(e) => setLongBreakInterval(e.target.value)}	
+						min={0} onChange={(e) => setLongBreakInterval(parseInt(e.target.value))}	
 					></input>
 				</div>
 				<hr></hr>
@@ -136,13 +148,14 @@ export const Settings = ({triggerButton}) => {
 							{alarmSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
 						</select>
 						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
-							<p className="popup-time-input-label">{alarmVolumn}</p>
-							<input type="range" min="1" max="100" value={alarmVolumn} onChange={(e) => setAlarmVolumn(e.target.value)}/>
+							<p className="popup-time-input-label">{alarmVolume}</p>
+							<input type="range" min="1" max="100" value={alarmVolume} 
+								onChange={(e) => setAlarmVolume(parseInt(e.target.value))}/>
 						</div>
 						<div className="popup-alarm-repeat">
 							<p>{t('repeat')}</p>
 							<input type="number" className="popup-number-input popup-repeat-input" min={0}
-								placeholder={0} value={alarmRepeat} onChange={(e) => setAlarmRepeat(e.target.value)}></input>
+								placeholder={0} value={alarmRepeat} onChange={(e) => setAlarmRepeat(parseInt(e.target.value))}></input>
 						</div>
 					</div>
 				</div>
@@ -154,8 +167,8 @@ export const Settings = ({triggerButton}) => {
 							{tickingSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
 						</select>
 						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
-							<p className="popup-time-input-label">{tickingVolumn}</p>
-							<input type="range" min="1" max="100" value={tickingVolumn} onChange={(e) => setTickingVolumn(e.target.value)}/>
+							<p className="popup-time-input-label">{tickingVolume}</p>
+							<input type="range" min="1" max="100" value={tickingVolume} onChange={(e) => setTickingVolume(parseInt(e.target.value))}/>
 						</div>
 					</div>
 				</div>
@@ -166,11 +179,12 @@ export const Settings = ({triggerButton}) => {
 				<div className="popup-one-line-control">
 					<p className="popup-item-title">{t("notification")}</p>
 					<div className="popup-notification-setup">
-						<select name="notiOptions" className="popup-select">
+						<select name="notiOptions" className="popup-select" 
+							onChange={(e) => setNotificationMode(e.target.value)} defaultValue={notificationMode}>
 							{notifyTypes.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
 						</select>
 						<input type="number" className="popup-number-input popup-repeat-input" placeholder={0}
-							min={0}	
+							min={0}	value={notificationMinutes} onChange={(e) => setNotificationMinutes(parseInt(e.target.value))}
 						></input>
 						<p>{t('min')}</p>
 					</div>
