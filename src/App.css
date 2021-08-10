@@ -195,12 +195,12 @@ body {
 }
 
 .popup-exit {
-	color: green;
+	color: var(--workColor);
+	cursor: pointer;
 }
 
 .popup-exit:hover {
-	cursor: pointer;
-	color: var(--workColor);
+	color: green;
 }
 
 .popup-header {

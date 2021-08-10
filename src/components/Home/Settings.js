@@ -1,9 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router';
+
 import Popup from 'reactjs-popup';
 import Switch from '@material-ui/core/Switch';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+
+import { resetSetting, updateSetting } from '../../redux/actions/settingActions';
+import { CircularProgress } from '@material-ui/core';
 
 
 const timeTypes = [
@@ -20,11 +25,9 @@ const alarmSounds = [
 	{id: 5, name: "summer"},
 ] 
 const tickingSounds = [
-	{id: 1, name: "wood"},
-	{id: 2, name: "cat"},
-	{id: 3, name: "dog"},
-	{id: 4, name: "tiger"},
-	{id: 5, name: "summer"},
+	{id: 1, name: "None"},
+	{id: 2, name: "Ticking Fast"},
+	{id: 3, name: "Ticking Slow"},
 ];
 
 const notifyTypes = [
@@ -34,7 +37,10 @@ const notifyTypes = [
 
 export const Settings = ({triggerButton}) => {
 	const { t } = useTranslation();
+	const dispatch = useDispatch();
+	const history = useHistory();
 	const settingState = useSelector(state => state.settingState);
+	const { userSignin } = useSelector(state => state.userSignin);
 	const { setting } = settingState;
 
 	const [pomoMinutes, setPomoMinutes] = useState(timeTypes[0].value);
@@ -43,12 +49,25 @@ export const Settings = ({triggerButton}) => {
 	const [autoStartBreaks, setAutoStartBreaks] = useState(false);
 	const [autoStartPomo, setAutoStartPomo] = useState(true);
 	const [longBreakInterval, setLongBreakInterval] = useState(4);
+	const [alarmSound, setAlarmSound] = useState("Wood");
 	const [alarmVolume, setAlarmVolume] = useState(39);
 	const [alarmRepeat, setAlarmRepeat] = useState(1);
+	const [tickingSpeed, setTickingSpeed] = useState("None");
 	const [tickingVolume, setTickingVolume] = useState(50);
 	const [darkMode, setDarkMode] = useState(false);
 	const [notificationMode, setNotificationMode] = useState("Last");
 	const [notificationMinutes, setNotificationMinutes] = useState(2);
+
+	const { 
+		loading: updateLoading, 
+		success: updateSuccess, 
+		error: updateError 
+	} = useSelector(state => state.updateSettingState);
+	const { 
+		loading: resetLoading, 
+		success: resetSuccess, 
+		error: resetError 
+	} = useSelector(state => state.resetSettingState);
 
 	const popup = useRef();
 	
@@ -60,14 +79,23 @@ export const Settings = ({triggerButton}) => {
 			setAutoStartBreaks(setting.autoStartBreak);
 			setAutoStartPomo(setting.autoStartPomodoro);
 			setLongBreakInterval(setting.longBreakInterval);
+			setAlarmSound(setting.alarmSound);
 			setAlarmVolume(setting.alarmVolume);
 			setAlarmRepeat(setting.alarmRepeat);
+			setTickingSpeed(setting.tickingSpeed);
 			setTickingVolume(setting.tickingVolume);
 			setDarkMode(setting.darkMode);
 			setNotificationMode(setting.notificationMode);
 			setNotificationMinutes(setting.notificationMinutes);
 		}
 	},[setting]);
+
+	// reload page when update or reset success
+	useEffect(() => {
+		if (updateSuccess || resetSuccess) {
+			window.location.reload();
+		}
+	},[updateSuccess, resetSuccess])
 
 	const toggleStartBreaks = (event) => {
 		setAutoStartBreaks(event.target.checked);
@@ -91,12 +119,30 @@ export const Settings = ({triggerButton}) => {
 		)
 	}
 
+	const handleUpdate = () => {
+		// fetch api to update setting
+		dispatch(updateSetting({
+			pomodoro: pomoMinutes, shortBreak: shortMinutes, longBreak: longMinutes, autoStartBreak: autoStartBreaks,
+			autoStartPomodoro: autoStartPomo, longBreakInterval, alarmSound,	tickingSpeed, alarmVolume, alarmRepeat,
+			tickingVolume, darkMode, notificationMode, notificationMinutes, 
+		}));
+		
+		popup.current.close()
+	}
+
+	const handleReset = () => {
+		// fetch api to reset setting
+		const username = userSignin?.username;
+		if (username?.length > 0)
+			dispatch(resetSetting({username}));
+	}
+
 	return (
 		<Popup ref={popup} trigger={triggerButton} position="bottom right">
 			<div className="popup-container">
 				<div className="popup-header">
 					<p className="popup-title">{t("timer_setting")}</p>
-					<div onClick={() => popup.current.close()}>
+					<div onClick={() => handleUpdate()}>
 						<CheckCircleIcon className="popup-exit" />
 					</div>
 				</div>
@@ -144,7 +190,8 @@ export const Settings = ({triggerButton}) => {
 				<div className="popup-multi-line-control">
 					<p className="popup-item-title">{t("alarm_sound")}</p>
 					<div className="popup-multi-options">
-						<select name="alamsOptions" className="popup-select">
+						<select name="alamsOptions" className="popup-select" value={alarmSound}
+							onChange={(e) => setAlarmSound(e.target.value)}>
 							{alarmSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
 						</select>
 						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
@@ -163,7 +210,8 @@ export const Settings = ({triggerButton}) => {
 				<div className="popup-multi-line-control">
 					<p className="popup-item-title">{t("ticking_sound")}</p>
 					<div className="popup-multi-options">
-						<select name="tickingOptions" className="popup-select">
+						<select name="tickingOptions" className="popup-select" 
+							value={tickingSpeed} onChange={(e) => setTickingSpeed(e.target.value)}>
 							{tickingSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
 						</select>
 						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
@@ -191,7 +239,8 @@ export const Settings = ({triggerButton}) => {
 				</div>
 				<hr></hr>
 				<div className="popup-button-area">
-					<button type="submit">{t("ok")}</button>
+					{!resetLoading ? <button type="submit" onClick={() => handleReset()}>{t("reset")}</button>
+					:<CircularProgress style={{marginRight: "30px", color: "black"}} size={20}/>}
 				</div>
 			</div>
 		</Popup>

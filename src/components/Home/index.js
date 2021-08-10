@@ -33,7 +33,7 @@ export const Home = () => {
 			:<div>
 				<Header onOpenSetting={openSetting}/>
 				<div className="header-line"></div>
-				{isSettingOpen && <Settings setting={setting}/>}
+				{isSettingOpen && <Settings />}
 				<Main setting={setting}/>
 			</div>}
 		</div>

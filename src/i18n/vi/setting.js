@@ -10,5 +10,6 @@ export const setting = {
 	"ticking_sound": "âm thành ticking",
 	"dark_mode_when_running": "Chế độ tối khi chạy",
 	"notification": "Thông báo",
-	"ok": "OK"
+	"ok": "OK",
+	"reset": "Đặt lại",
 }

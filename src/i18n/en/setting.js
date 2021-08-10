@@ -10,5 +10,6 @@ export const setting = {
 	"ticking_sound": "Ticking Sound",
 	"dark_mode_when_running": "Dark Mode When running",
 	"notification": "Notification",
-	"ok": "OK"
+	"ok": "OK",
+	"reset": "RESET"
 }
