@@ -7,13 +7,13 @@ export const exitSignin = () => async (dispatch) => {
 	dispatch({type: SIGNIN_EXIT})
 }
 
-export const signin = ({username, password, checked}) => async (dispatch) => {
+export const signin = ({username, password}) => async (dispatch) => {
 	dispatch({type: SIGNIN_REQUEST})
 	try {
 		const axios = MyAxios();
 		const response = await axios.post("/api/login", {name: username, password});
 		const data = response.data;
-		if (data && checked) {
+		if (data) {
 			Cookies.set('credential', JSON.stringify({username, password, token: data}));
 		}
 		dispatch({type: SIGNIN_SUCCESS, payload: {username, password, token: data}});

@@ -20,6 +20,7 @@
     "reactjs-popup": "^2.0.4",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
+    "use-sound": "^4.0.1",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -47,6 +48,8 @@
     ]
   },
   "react-dotenv": {
-    "whitelist": ["API_URL"]
+    "whitelist": [
+      "API_URL"
+    ]
   }
 }
