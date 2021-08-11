@@ -6,11 +6,14 @@ import { SignIn } from "./components/auth/SignIn";
 import { SignUp } from "./components/auth/SignUp";
 import { Home } from "./components/Home";
 
+import { Notifications } from 'react-push-notification';
+
 const App = () => {
 	
 
   return (
 		<Router>
+				<Notifications />
 				<Switch>
 					<Route exact path="/">
 						<Home />
