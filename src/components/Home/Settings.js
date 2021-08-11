@@ -4,16 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import useSound from 'use-sound';
 
-import Popup from 'reactjs-popup';
 import Switch from '@material-ui/core/Switch';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
 import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
 import { WOOD, CAT, BIRD, DOG, CHICKEN } from '../../constants/alarmSounds';
 
-import { resetSetting, updateSetting } from '../../redux/actions/settingActions';
+import { getSetting, resetSetting, updateSetting, exitSetting } from '../../redux/actions/settingActions';
 import { CircularProgress } from '@material-ui/core';
-
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const timeTypes = [
 	{ id: 1, name: "Pomodoros", value: 20 },
@@ -45,7 +44,7 @@ export const Settings = ({triggerButton}) => {
 	const history = useHistory();
 	const settingState = useSelector(state => state.settingState);
 	const { userSignin } = useSelector(state => state.userSignin);
-	const { setting } = settingState;
+	const { setting, loading: settingLoading, error: settingError } = settingState;
 
 	const [pomoMinutes, setPomoMinutes] = useState(timeTypes[0].value);
 	const [shortMinutes, setShortMinutes] = useState(timeTypes[1].value);
@@ -88,8 +87,15 @@ export const Settings = ({triggerButton}) => {
 		error: resetError 
 	} = useSelector(state => state.resetSettingState);
 
-	const popup = useRef();
-	
+	useEffect(() => {
+		let isMounted = true;
+		const username = userSignin?.username;
+		if (isMounted && username?.length > 0)
+			dispatch(getSetting({username}));
+
+		return () => isMounted = false;
+	}, [userSignin])
+
 	useEffect(() => {
 		if (setting && Object.keys(setting).length > 0) {
 			setPomoMinutes(setting.pomodoro);
@@ -112,7 +118,8 @@ export const Settings = ({triggerButton}) => {
 	// reload page when update or reset success
 	useEffect(() => {
 		if (updateSuccess || resetSuccess) {
-			window.location.reload();
+			dispatch(exitSetting());
+			history.goBack();
 		}
 	},[updateSuccess, resetSuccess])
 
@@ -156,8 +163,6 @@ export const Settings = ({triggerButton}) => {
 			autoStartPomodoro: autoStartPomo, longBreakInterval, alarmSound,	tickingSpeed, alarmVolume, alarmRepeat,
 			tickingVolume, darkMode, notificationMode, notificationMinutes, 
 		}));
-		
-		popup.current.close()
 	}
 
 	const handleReset = () => {
@@ -170,115 +175,121 @@ export const Settings = ({triggerButton}) => {
 		const username = userSignin?.username;
 		if (username?.length > 0)
 			dispatch(resetSetting({username}));
+
 	}
 
 	return (
-		<Popup ref={popup} trigger={triggerButton} position="bottom right">
 			<div className="popup-container">
-				<div className="popup-header">
-					<p className="popup-title">{t("timer_setting")}</p>
-					<div onClick={() => handleUpdate()}>
-						<CheckCircleIcon className="popup-exit" />
+				{settingLoading 
+				? <CircularProgress style={{position: "absolute", color: "red"}} size={100}/> 
+				:<div style={{width: "100%"}}>
+					<div onClick={() => history.goBack()}>
+						<ArrowBackIcon className="back-btn"/>
 					</div>
-				</div>
-				<hr></hr>
-				<div className="popup-time-amount-setup">
-					<p className="popup-item-title">{`${t("time")} (${t("minutes")})`}</p>
-					<div className="popup-time-amount-box">
-						<div className="popup-time-box">
-							<p className="popup-time-input-label">{t("pomodoros")}</p>
-							<input type="number" value={pomoMinutes} placeholder={0} min={0}
-							onChange={(e) => setPomoMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
-						</div>
-						<div className="popup-time-box">
-							<p className="popup-time-input-label">{t("short_break")}</p>
-							<input type="number" value={shortMinutes} placeholder={0} min={0}
-							onChange={(e) => setShortMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
-						</div>
-						<div className="popup-time-box">
-							<p className="popup-time-input-label">{t("long_break")}</p>
-							<input type="number" value={longMinutes} placeholder={0} min={0}
-							onChange={(e) => setLongMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
+					<div className="popup-header">
+						<p className="popup-title">{t("timer_setting")}</p>
+						<div onClick={() => handleUpdate()}>
+							{updateLoading ? <CircularProgress style={{marginRight: "5px", color: "green"}} size={20}/>
+							:<CheckCircleIcon className="popup-exit"/>}
 						</div>
 					</div>
-				</div>
-				<hr></hr>
-				<PopupToggle 
-					title={t('auto_start_breaks') + " ?"} 
-					state={autoStartBreaks} 
-					onToggle={(event) => toggleStartBreaks(event)}
-				/>
-				<hr></hr>
-				<PopupToggle 
-					title={t(('auto_start_pomodoros')) + " ?"}
-					state={autoStartPomo} 
-					onToggle={(event) => toggleStartPomo(event)}
-				/>
-				<hr></hr>
-				<div className="popup-one-line-control">
-					<p className="popup-item-title">{t("long_break_interval")}</p>
-					<input type="number" className="popup-number-input" placeholder={0} value={longBreakInterval}
-						min={0} onChange={(e) => setLongBreakInterval(parseInt(e.target.value))}	
-					></input>
-				</div>
-				<hr></hr>
-				<div className="popup-multi-line-control">
-					<p className="popup-item-title">{t("alarm_sound")}</p>
-					<div className="popup-multi-options">
-						<select name="alamsOptions" className="popup-select" value={alarmSound}
-							onChange={(e) => updateAlarmSound(e)}>
-							{alarmSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
-						</select>
-						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
-							<p className="popup-time-input-label">{alarmVolume}</p>
-							<input type="range" min="1" max="100" value={alarmVolume} 
-								onChange={(e) => setAlarmVolume(parseInt(e.target.value))}/>
-						</div>
-						<div className="popup-alarm-repeat">
-							<p>{t('repeat')}</p>
-							<input type="number" className="popup-number-input popup-repeat-input" min={0}
-								placeholder={0} value={alarmRepeat} onChange={(e) => setAlarmRepeat(parseInt(e.target.value))}></input>
+					<hr></hr>
+					<div className="popup-time-amount-setup">
+						<p className="popup-item-title">{`${t("time")} (${t("minutes")})`}</p>
+						<div className="popup-time-amount-box">
+							<div className="popup-time-box">
+								<p className="popup-time-input-label">{t("pomodoros")}</p>
+								<input type="number" value={pomoMinutes} placeholder={0} min={0}
+								onChange={(e) => setPomoMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
+							</div>
+							<div className="popup-time-box">
+								<p className="popup-time-input-label">{t("short_break")}</p>
+								<input type="number" value={shortMinutes} placeholder={0} min={0}
+								onChange={(e) => setShortMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
+							</div>
+							<div className="popup-time-box">
+								<p className="popup-time-input-label">{t("long_break")}</p>
+								<input type="number" value={longMinutes} placeholder={0} min={0}
+								onChange={(e) => setLongMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
+							</div>
 						</div>
 					</div>
-				</div>
-				<hr></hr>
-				<div className="popup-multi-line-control">
-					<p className="popup-item-title">{t("ticking_sound")}</p>
-					<div className="popup-multi-options">
-						<select name="tickingOptions" className="popup-select" 
-							value={tickingSpeed} onChange={(e) => setTickingSpeed(e.target.value)}>
-							{tickingSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
-						</select>
-						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
-							<p className="popup-time-input-label">{tickingVolume}</p>
-							<input type="range" min="1" max="100" value={tickingVolume} onChange={(e) => setTickingVolume(parseInt(e.target.value))}/>
-						</div>
-					</div>
-				</div>
-				<hr></hr>
-				<PopupToggle title={t('dark_mode_when_running')} state={darkMode} 
-					onToggle={(event) => setDarkMode(event.target.checked)}/>
-				<hr></hr>
-				<div className="popup-one-line-control">
-					<p className="popup-item-title">{t("notification")}</p>
-					<div className="popup-notification-setup">
-						<select name="notiOptions" className="popup-select" 
-							onChange={(e) => setNotificationMode(e.target.value)} defaultValue={notificationMode}>
-							{notifyTypes.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
-						</select>
-						<input type="number" className="popup-number-input popup-repeat-input" placeholder={0}
-							min={0}	value={notificationMinutes} onChange={(e) => setNotificationMinutes(parseInt(e.target.value))}
+					<hr></hr>
+					<PopupToggle 
+						title={t('auto_start_breaks') + " ?"} 
+						state={autoStartBreaks} 
+						onToggle={(event) => toggleStartBreaks(event)}
+					/>
+					<hr></hr>
+					<PopupToggle 
+						title={t(('auto_start_pomodoros')) + " ?"}
+						state={autoStartPomo} 
+						onToggle={(event) => toggleStartPomo(event)}
+					/>
+					<hr></hr>
+					<div className="popup-one-line-control">
+						<p className="popup-item-title">{t("long_break_interval")}</p>
+						<input type="number" className="popup-number-input" placeholder={0} value={longBreakInterval}
+							min={0} onChange={(e) => setLongBreakInterval(parseInt(e.target.value))}	
 						></input>
-						<p>{t('min')}</p>
 					</div>
-				</div>
-				<hr></hr>
-				<div className="popup-button-area">
-					{!resetLoading ? <button type="submit" onClick={() => handleReset()}>{t("reset")}</button>
-					:<CircularProgress style={{marginRight: "30px", color: "black"}} size={20}/>}
-				</div>
-			</div>
-		</Popup>
-		
+					<hr></hr>
+					<div className="popup-multi-line-control">
+						<p className="popup-item-title">{t("alarm_sound")}</p>
+						<div className="popup-multi-options">
+							<select name="alamsOptions" className="popup-select" value={alarmSound}
+								onChange={(e) => updateAlarmSound(e)}>
+								{alarmSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
+							</select>
+							<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
+								<p className="popup-time-input-label">{alarmVolume}</p>
+								<input type="range" min="1" max="100" value={alarmVolume} 
+									onChange={(e) => setAlarmVolume(parseInt(e.target.value))}/>
+							</div>
+							<div className="popup-alarm-repeat">
+								<p>{t('repeat')}</p>
+								<input type="number" className="popup-number-input popup-repeat-input" min={0}
+									placeholder={0} value={alarmRepeat} onChange={(e) => setAlarmRepeat(parseInt(e.target.value))}></input>
+							</div>
+						</div>
+					</div>
+					<hr></hr>
+					<div className="popup-multi-line-control">
+						<p className="popup-item-title">{t("ticking_sound")}</p>
+						<div className="popup-multi-options">
+							<select name="tickingOptions" className="popup-select" 
+								value={tickingSpeed} onChange={(e) => setTickingSpeed(e.target.value)}>
+								{tickingSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
+							</select>
+							<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
+								<p className="popup-time-input-label">{tickingVolume}</p>
+								<input type="range" min="1" max="100" value={tickingVolume} onChange={(e) => setTickingVolume(parseInt(e.target.value))}/>
+							</div>
+						</div>
+					</div>
+					<hr></hr>
+					<PopupToggle title={t('dark_mode_when_running')} state={darkMode} 
+						onToggle={(event) => setDarkMode(event.target.checked)}/>
+					<hr></hr>
+					<div className="popup-one-line-control">
+						<p className="popup-item-title">{t("notification")}</p>
+						<div className="popup-notification-setup">
+							<select name="notiOptions" className="popup-select" 
+								onChange={(e) => setNotificationMode(e.target.value)} defaultValue={notificationMode}>
+								{notifyTypes.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
+							</select>
+							<input type="number" className="popup-number-input popup-repeat-input" placeholder={0}
+								min={0}	value={notificationMinutes} onChange={(e) => setNotificationMinutes(parseInt(e.target.value))}
+							></input>
+							<p>{t('min')}</p>
+						</div>
+					</div>
+					<hr></hr>
+					<div className="popup-button-area">
+						{!resetLoading ? <button type="submit" onClick={() => handleReset()}>{t("reset")}</button>
+						:<CircularProgress style={{marginRight: "30px", color: "black"}} size={20}/>}
+					</div>
+			</div>}
+		</div>	
 	)
 }

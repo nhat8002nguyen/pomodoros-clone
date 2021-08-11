@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
 
-import { Settings } from "./Settings";
 import { logout } from "../../redux/actions/userActions";
 
 import Popup from "reactjs-popup";
@@ -48,6 +47,10 @@ const Header = () => {
 		});
 	}
 
+	const goToSetting = () => {
+		history.push("/settings");
+	}
+
 	const goToSignin = () => {
 		history.push("/signin");
 	}
@@ -60,11 +63,9 @@ const Header = () => {
     <div className="header">
       <p className="title">pomodoros</p>
       <div className="header-btn-group">
-				<Settings triggerButton={
-					<div className="header-btn">
-						<p>{t('settings')}</p>
-					</div>
-				}/>
+				<div className="header-btn" onClick={() => goToSetting()}>
+					<p>{t('settings')}</p>
+				</div>
         
         {!isSignedIn ? <div className="header-btn" onClick={() => goToSignin()}>
           <p>{t('signIn')}</p>

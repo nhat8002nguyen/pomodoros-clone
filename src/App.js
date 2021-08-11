@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { SignIn } from "./components/auth/SignIn";
 import { SignUp } from "./components/auth/SignUp";
 import { Home } from "./components/Home";
+import { Settings } from "./components/Home/Settings";
 
 import { Notifications } from 'react-push-notification';
 
@@ -23,6 +24,9 @@ const App = () => {
 					</Route>
 					<Route path="/signup">
 						<SignUp />
+					</Route>
+					<Route path="/settings">
+						<Settings />
 					</Route>
 				</Switch>
 		</Router>

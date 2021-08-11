@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
 import useSound from 'use-sound';
@@ -8,9 +8,13 @@ import { pushNotification } from "../../helpers/pushNotification";
 import { WORK_NOTIFY, SHORT_BREAK_NOTIFY, LONG_BREAK_NOTIFY } from '../../constants/notificationConstants';
 import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
 import { WOOD, CAT, BIRD, DOG, CHICKEN } from '../../constants/alarmSounds';
+import { getSetting } from "../../redux/actions/settingActions"; 
+import {Flash} from './Flash'
+
 
 export default function Main() {
 	const { t } = useTranslation();
+	const dispatch = useDispatch();
 	const [pomodoro, setPomodoro] = useState(3);
 	const [shortBreak, setShortBreak] = useState(3);
 	const [longBreak, setLongBreak] = useState(3);
@@ -25,7 +29,8 @@ export default function Main() {
 	const [autoStartBreaks, setAutoStartBreaks] = useState(true);
 	const [autoStartPomo, setAutoStartPomo] = useState(true);
 
-	const { setting } = useSelector(state => state.settingState);
+	const { userSignin } = useSelector(state => state.userSignin);
+	const { setting, loading, error } = useSelector(state => state.settingState);
 
 	const [play] = useSound(ClickSound);
 	const [playWoodSound] = useSound(WoodSound);
@@ -43,6 +48,15 @@ export default function Main() {
 	}
 
   const timeRun = useRef();
+
+	useEffect(() => {
+		let isMounted = true;
+		const username = userSignin?.username;
+		if (isMounted && username?.length > 0)
+			dispatch(getSetting({username}));
+
+		return () => isMounted = false;
+	}, [userSignin])
 
 	// get time data from setting api
 	useEffect(() => {
@@ -170,7 +184,8 @@ export default function Main() {
 
   return (
     <div className="main-container">
-      <div className="time-type-area" style={{ backgroundColor: midAreaColor }}>
+			{loading ? <Flash />
+      :<div className="time-type-area" style={{ backgroundColor: midAreaColor }}>
         <div className="time-type-group">
           <div
             className="time-type-box"
@@ -217,7 +232,7 @@ export default function Main() {
             <SkipNextIcon fontSize="large" />
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

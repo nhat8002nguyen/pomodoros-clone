@@ -1,6 +1,6 @@
 import { SETTING_REQUEST, SETTING_SUCCESS, SETTING_FAIL,
 	UPDATE_SETTING_REQUEST, UPDATE_SETTING_SUCCESS, UPDATE_SETTING_FAIL, 
-	RESET_SETTING_REQUEST, RESET_SETTING_SUCCESS, RESET_SETTING_FAIL } from '../constants/settingConstants';
+	RESET_SETTING_REQUEST, RESET_SETTING_SUCCESS, RESET_SETTING_FAIL, EXIT_SETTING } from '../constants/settingConstants';
 import { MyAxios } from '../../utils/Axios';
 import { pushNotification } from '../../helpers/pushNotification';
 
@@ -55,3 +55,7 @@ export const resetSetting = ({username}) => async (dispatch, getState) => {
 		dispatch({type: RESET_SETTING_FAIL, payload: err.message});
 	}
 };
+
+export const exitSetting = () => async (dispatch) => {
+	dispatch({type: EXIT_SETTING});
+}
