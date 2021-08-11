@@ -59,7 +59,7 @@ export const SignUp = () => {
 			<p className="big-title">Pomodoros</p>
 			<p className="title">{t('signUp')}</p>
 			<form onSubmit={(e) => handleSubmit(e)}>
-				<input type="email" className="credential" placeholder={t("email")}
+				<input type="email" className="credential" placeholder={t("email")} autoFocus="on"
 					onChange={(e) => setEmail(e.target.value.trim())}></input>
 				<input type="input" className="credential" placeholder={t("username")}
 					onChange={(e) => setUsername(e.target.value.trim())}></input>

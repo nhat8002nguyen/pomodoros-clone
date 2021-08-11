@@ -18,7 +18,6 @@ export const SignIn = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [disabled, setDisabled] = useState(false);
-	const [checked, setChecked] = useState(false);
 
 	useEffect(() => {
 		setDisabled(username.length > 0 && password.length > 0 ? false: true);
@@ -54,7 +53,7 @@ export const SignIn = () => {
 			return false;
 		}
 
-		dispatch(signin({username, password, checked}));
+		dispatch(signin({username, password}));
 	}
 
 	return (
@@ -65,14 +64,10 @@ export const SignIn = () => {
 			<p className="big-title">Pomodoros</p>
 			<p className="title">{t('signIn')}</p>
 			<form onSubmit={(e) => handleSubmit(e)}>
-				<input type="input" className="credential" placeholder={t("username")} 
+				<input type="input" className="credential" placeholder={t("username")} autoFocus="on"
 					onChange={(e) => setUsername(e.target.value.trim())}></input>
-				<input type="password" className="credential" placeholder={t("password")}
+				<input type="password" className="credential" placeholder={t("password")} 
 					onChange={(e) => setPassword(e.target.value.trim())}></input>
-				<div className="row keep-signin">
-					<input type="checkbox" checked={checked} onChange={() => setChecked(!checked)} value="duy tri" ></input>
-					<p>{t("keepSignIn")}</p>
-				</div>
 				{!loading ? <input type="submit" disabled={disabled} className="credential signin-btn" value={t("signIn")}></input>
 				:<CircularProgress style={{margin: "auto", color: "white"}} size={30}/>}
 				<div className="row">
