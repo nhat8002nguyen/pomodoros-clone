@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "./Header";
 import Main from "./Main";
 import { Settings } from "./Settings";
-
 import { getSetting } from "../../redux/actions/settingActions"; 
+
 import { Flash } from "./Flash";
 
 export const Home = () => {

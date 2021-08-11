@@ -3,6 +3,7 @@ import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
 import useSound from 'use-sound';
 import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
+import { pushNotification } from "../../helpers";
 
 export default function Main({setting}) {
 	const { t } = useTranslation();
@@ -48,6 +49,7 @@ export default function Main({setting}) {
   	timeRun.current = setInterval(() => {
         setTime((prev) => prev - 1);
     }, 1000);
+		pushNotification(timeType);
 	}
 
   useEffect(() => {
