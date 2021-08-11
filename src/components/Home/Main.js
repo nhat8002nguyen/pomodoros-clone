@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
+import useSound from 'use-sound';
+import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
 
 export default function Main({setting}) {
 	const { t } = useTranslation();
@@ -13,6 +15,7 @@ export default function Main({setting}) {
   const [time, setTime] = useState(5);
   const [numPomo, setNumPomo] = useState(1);
   const [midAreaColor, setMidAreaColor] = useState("#f06e65");
+	const [play] = useSound(ClickSound);
 
   const timeRun = useRef();
 
@@ -28,6 +31,7 @@ export default function Main({setting}) {
 	
   const onStartTime = () => {
     setRunState(true);
+		play(); // play click sound 
   };
 
   // start time or stop time
@@ -108,6 +112,7 @@ export default function Main({setting}) {
 
 	const onStopTime = () => {
     setRunState(false);
+		play(); 
   };
 
   const secondsToMinutes = (seconds) => {
