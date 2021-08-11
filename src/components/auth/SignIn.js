@@ -66,9 +66,9 @@ export const SignIn = () => {
 			<p className="title">{t('signIn')}</p>
 			<form onSubmit={(e) => handleSubmit(e)}>
 				<input type="input" className="credential" placeholder={t("username")} 
-					onChange={(e) => setUsername(e.target.value)}></input>
+					onChange={(e) => setUsername(e.target.value.trim())}></input>
 				<input type="password" className="credential" placeholder={t("password")}
-					onChange={(e) => setPassword(e.target.value)}></input>
+					onChange={(e) => setPassword(e.target.value.trim())}></input>
 				<div className="row keep-signin">
 					<input type="checkbox" checked={checked} onChange={() => setChecked(!checked)} value="duy tri" ></input>
 					<p>{t("keepSignIn")}</p>

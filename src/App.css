@@ -34,6 +34,25 @@ body {
   margin: auto;
 }
 
+/* flash */ 
+.flash-container {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.flash-title {
+	font-size: var(--fontSizeBigTitle);
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 /* header */
 
 .header {
@@ -176,12 +195,12 @@ body {
 }
 
 .popup-exit {
-	color: green;
+	color: var(--workColor);
+	cursor: pointer;
 }
 
 .popup-exit:hover {
-	cursor: pointer;
-	color: var(--workColor);
+	color: green;
 }
 
 .popup-header {

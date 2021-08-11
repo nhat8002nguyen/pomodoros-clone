@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { signup } from '../../redux/actions/userActions';
 
@@ -11,7 +12,7 @@ export const SignUp = () => {
 	const { t } = useTranslation();
 	const history = useHistory();
 	const dispatch = useDispatch();
-	const { success } = useSelector(state => state.userSignup);
+	const { loading ,success } = useSelector(state => state.userSignup);
 
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
@@ -59,14 +60,15 @@ export const SignUp = () => {
 			<p className="title">{t('signUp')}</p>
 			<form onSubmit={(e) => handleSubmit(e)}>
 				<input type="email" className="credential" placeholder={t("email")}
-					onChange={(e) => setEmail(e.target.value)}></input>
+					onChange={(e) => setEmail(e.target.value.trim())}></input>
 				<input type="input" className="credential" placeholder={t("username")}
-					onChange={(e) => setUsername(e.target.value)}></input>
+					onChange={(e) => setUsername(e.target.value.trim())}></input>
 				<input type="password" className="credential" placeholder={t("password")}
-					onChange={(e) => setPassword(e.target.value)}></input>
+					onChange={(e) => setPassword(e.target.value.trim())}></input>
 				<input type="password" className="credential" placeholder={t("rePassword")}
-					onChange={(e) => setRePassword(e.target.value)}></input>
-				<input type="submit" disabled={disabled} className="credential signin-btn" value={t("signUp")}></input>
+					onChange={(e) => setRePassword(e.target.value.trim())}></input>
+				{!loading ? <input type="submit" disabled={disabled} className="credential signin-btn" value={t("signUp")}></input>
+				:<CircularProgress style={{margin: "auto", color: "white"}} size={30}/>}
 				<div className="row">
 					<p>{t("hadAccount")}</p>
 					<p onClick={() => moveToSignIn()} className="signup-link">{t("signIn")}</p>
