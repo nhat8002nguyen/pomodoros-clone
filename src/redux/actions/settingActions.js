@@ -2,7 +2,7 @@ import { SETTING_REQUEST, SETTING_SUCCESS, SETTING_FAIL,
 	UPDATE_SETTING_REQUEST, UPDATE_SETTING_SUCCESS, UPDATE_SETTING_FAIL, 
 	RESET_SETTING_REQUEST, RESET_SETTING_SUCCESS, RESET_SETTING_FAIL } from '../constants/settingConstants';
 import { MyAxios } from '../../utils/Axios';
-import { pushNotification } from '../../helpers';
+import { pushNotification } from '../../helpers/pushNotification';
 
 
 export const getSetting = ({ username }) => async (dispatch, getState) => {

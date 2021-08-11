@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
 import useSound from 'use-sound';
 import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
-import { pushNotification } from "../../helpers";
+import { pushNotification } from "../../helpers/pushNotification";
+import { WORK_NOTIFY, SHORT_BREAK_NOTIFY, LONG_BREAK_NOTIFY } from '../../constants/notificationConstants';
+import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
+import { WOOD, CAT, BIRD, DOG, CHICKEN } from '../../constants/alarmSounds';
 
-export default function Main({setting}) {
+export default function Main() {
 	const { t } = useTranslation();
 	const [pomodoro, setPomodoro] = useState(3);
 	const [shortBreak, setShortBreak] = useState(3);
@@ -16,7 +20,27 @@ export default function Main({setting}) {
   const [time, setTime] = useState(5);
   const [numPomo, setNumPomo] = useState(1);
   const [midAreaColor, setMidAreaColor] = useState("#f06e65");
+	const [notificationMinutes, setNotificationMinutes] = useState(5);
+	const [alarmSound, setAlarmSound] = useState(WOOD);
+	const [autoStartBreaks, setAutoStartBreaks] = useState(true);
+	const [autoStartPomo, setAutoStartPomo] = useState(true);
+
+	const { setting } = useSelector(state => state.settingState);
+
 	const [play] = useSound(ClickSound);
+	const [playWoodSound] = useSound(WoodSound);
+	const [playBirdSound] = useSound(BirdSound);
+	const [playChickenSound] = useSound(ChickenSound);
+	const [playCatSound] = useSound(CatSound);
+	const [playDogSound] = useSound(DogSound);
+
+	const playSounds = {
+		[WOOD]: playWoodSound,
+		[BIRD]: playBirdSound,
+		[CHICKEN]: playChickenSound,
+		[CAT]: playCatSound, 
+		[DOG]: playDogSound,
+	}
 
   const timeRun = useRef();
 
@@ -27,6 +51,10 @@ export default function Main({setting}) {
 			setShortBreak(setting.shortBreak*60);
 			setLongBreak(setting.longBreak*60);
 			setLongBreakInterval(setting.longBreakInterval);
+			setNotificationMinutes(setting.notificationMinutes);
+			setAlarmSound(setting.alarmSound);
+			setAutoStartBreaks(setting.autoStartBreak);
+			setAutoStartPomo(setting.autoStartPomodoro);
 		}
 	}, [setting])
 	
@@ -50,6 +78,7 @@ export default function Main({setting}) {
         setTime((prev) => prev - 1);
     }, 1000);
 		pushNotification(timeType);
+		playSounds[alarmSound ? alarmSound : WOOD]();
 	}
 
   useEffect(() => {
@@ -57,7 +86,16 @@ export default function Main({setting}) {
     if (time === -1) {
       clearInterval(timeRun.current);
       changeNextTimeType();
-    }
+    } else if (time == 60 * notificationMinutes) {
+			// push noti when remain time
+			if (timeType == "Pomodoros" && numPomo < longBreakInterval) {
+				pushNotification(SHORT_BREAK_NOTIFY, notificationMinutes)
+    	} else if (timeType === "Pomodoros" && numPomo === longBreakInterval) {
+				pushNotification(LONG_BREAK_NOTIFY, notificationMinutes);
+			} else {
+				pushNotification(WORK_NOTIFY, notificationMinutes);
+			}
+		}
   }, [time, longBreakInterval]);
 
 	const changeNextTimeType = () => {
@@ -66,13 +104,16 @@ export default function Main({setting}) {
       newType = "Short Break";
       setNumPomo((prev) => prev + 1);
       setMidAreaColor("#54bf66");
+			setRunState(autoStartBreaks ? true : false);
     } else if (timeType === "Pomodoros" && numPomo === longBreakInterval) {
       newType = "Long Break";
       setNumPomo(1);
       setMidAreaColor("#5a84d1");
+			setRunState(autoStartBreaks ? true : false);
     } else {
       newType = "Pomodoros";
       setMidAreaColor("#f06e65");
+			setRunState(autoStartPomo ? true : false);
     }
     setTimeType(newType);
   };

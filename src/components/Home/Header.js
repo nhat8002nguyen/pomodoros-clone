@@ -10,7 +10,7 @@ import { logout } from "../../redux/actions/userActions";
 
 import Popup from "reactjs-popup";
 
-const Header = ({ onOpenSetting }) => {
+const Header = () => {
 	const { t, i18n } = useTranslation();
 	const [language, setLanguage] = useState(i18n.language);
 	const history = useHistory();
@@ -61,7 +61,7 @@ const Header = ({ onOpenSetting }) => {
       <p className="title">pomodoros</p>
       <div className="header-btn-group">
 				<Settings triggerButton={
-					<div className="header-btn" onClick={() => onOpenSetting()}>
+					<div className="header-btn">
 						<p>{t('settings')}</p>
 					</div>
 				}/>

@@ -2,10 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
+import useSound from 'use-sound';
 
 import Popup from 'reactjs-popup';
 import Switch from '@material-ui/core/Switch';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
+import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
+import { WOOD, CAT, BIRD, DOG, CHICKEN } from '../../constants/alarmSounds';
 
 import { resetSetting, updateSetting } from '../../redux/actions/settingActions';
 import { CircularProgress } from '@material-ui/core';
@@ -18,11 +22,11 @@ const timeTypes = [
 ];
 
 const alarmSounds = [
-	{id: 1, name: "wood"},
-	{id: 2, name: "cat"},
-	{id: 3, name: "dog"},
-	{id: 4, name: "tiger"},
-	{id: 5, name: "summer"},
+	{id: 1, name: WOOD},
+	{id: 2, name: CAT},
+	{id: 3, name: DOG},
+	{id: 4, name: BIRD},
+	{id: 5, name: CHICKEN},
 ] 
 const tickingSounds = [
 	{id: 1, name: "None"},
@@ -57,6 +61,21 @@ export const Settings = ({triggerButton}) => {
 	const [darkMode, setDarkMode] = useState(false);
 	const [notificationMode, setNotificationMode] = useState("Last");
 	const [notificationMinutes, setNotificationMinutes] = useState(2);
+
+	const [play] = useSound(ClickSound);
+	const [playWoodSound] = useSound(WoodSound);
+	const [playBirdSound] = useSound(BirdSound);
+	const [playChickenSound] = useSound(ChickenSound);
+	const [playCatSound] = useSound(CatSound);
+	const [playDogSound] = useSound(DogSound);
+
+	const playSounds = {
+		[WOOD]: playWoodSound,
+		[BIRD]: playBirdSound,
+		[CHICKEN]: playChickenSound,
+		[CAT]: playCatSound, 
+		[DOG]: playDogSound,
+	}
 
 	const { 
 		loading: updateLoading, 
@@ -119,7 +138,18 @@ export const Settings = ({triggerButton}) => {
 		)
 	}
 
+	const updateAlarmSound = (e) => {
+		playSounds[e.target.value]();	
+		setAlarmSound(e.target.value)
+	}
+
 	const handleUpdate = () => {
+		// check user sign in 
+		if (userSignin?.token == null) {
+			history.push("/signin");
+			return false;
+		}
+		play();
 		// fetch api to update setting
 		dispatch(updateSetting({
 			pomodoro: pomoMinutes, shortBreak: shortMinutes, longBreak: longMinutes, autoStartBreak: autoStartBreaks,
@@ -131,6 +161,11 @@ export const Settings = ({triggerButton}) => {
 	}
 
 	const handleReset = () => {
+		if (userSignin?.token == null) {
+			history.push("/signin");
+			return false;
+		}
+		play();
 		// fetch api to reset setting
 		const username = userSignin?.username;
 		if (username?.length > 0)
@@ -191,7 +226,7 @@ export const Settings = ({triggerButton}) => {
 					<p className="popup-item-title">{t("alarm_sound")}</p>
 					<div className="popup-multi-options">
 						<select name="alamsOptions" className="popup-select" value={alarmSound}
-							onChange={(e) => setAlarmSound(e.target.value)}>
+							onChange={(e) => updateAlarmSound(e)}>
 							{alarmSounds.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
 						</select>
 						<div style={{display: 'flex', gap: "10px", alignItems: "center"}}>
