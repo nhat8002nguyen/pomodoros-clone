@@ -22,7 +22,7 @@
 
 body {
   font-size: 16px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: serif;
   color: white;
   background-color: var(--workColor);
 }
@@ -151,6 +151,7 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 120px;
+	font-weight: var(--fontWeightBold);
   margin-top: 20px;
 }
 
@@ -426,6 +427,45 @@ form {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+/* fetch result view*/
+.result-container {
+	min-height: 300px;
+	margin: auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 50px;
+}
+
+.result-message {
+	font-size: var(--fontSizeBigTitle);
+	font-weight: var(--fontWeightBold);
+	color: green;
+}
+
+.result-icon {
+	color: green;
+	transform: scale(3);
+}
+
+.result-button {
+	width: 30%;
+	height: 50px;; 
+	font-size: var(--fontSizeNormal);
+	font-weight: var(--fontWeightBold);
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.result-button:hover {
+	background-color: grey;
+	color: white;
+}
+
 
 
 @media only screen and (max-width: 680px) {

@@ -8,6 +8,7 @@ import { Home } from "./components/Home";
 import { Settings } from "./components/Home/Settings";
 
 import { Notifications } from 'react-push-notification';
+import { FetchResultView } from "./components/Home/FetchResultView";
 
 const App = () => {
 	
@@ -27,6 +28,9 @@ const App = () => {
 					</Route>
 					<Route path="/settings">
 						<Settings />
+					</Route>
+					<Route path="/result/:message">
+						<FetchResultView />
 					</Route>
 				</Switch>
 		</Router>

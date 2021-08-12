@@ -11,5 +11,7 @@ export const setting = {
 	"dark_mode_when_running": "Dark Mode When running",
 	"notification": "Notification",
 	"ok": "OK",
-	"reset": "RESET"
+	"reset": "RESET",
+	"success": "Successfully!",
+	"error": "Oops, something wrong !",
 }

@@ -11,7 +11,6 @@ export const Home = () => {
 			<div>
 				<Header />
 				<div className="header-line"></div>
-				{/* <Main setting={setting}/> */}
 				<Main />
 			</div>
 		</div>

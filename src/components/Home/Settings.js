@@ -8,7 +8,7 @@ import Switch from '@material-ui/core/Switch';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
 import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
-import { WOOD, CAT, BIRD, DOG, CHICKEN } from '../../constants/alarmSounds';
+import { WOOD, CAT, BIRD, DOG, CHICKEN, NONE } from '../../constants/alarmSounds';
 
 import { getSetting, resetSetting, updateSetting, exitSetting } from '../../redux/actions/settingActions';
 import { CircularProgress } from '@material-ui/core';
@@ -26,6 +26,7 @@ const alarmSounds = [
 	{id: 3, name: DOG},
 	{id: 4, name: BIRD},
 	{id: 5, name: CHICKEN},
+	{id: 6, name: NONE},
 ] 
 const tickingSounds = [
 	{id: 1, name: "None"},
@@ -38,7 +39,7 @@ const notifyTypes = [
 	{ id: 2, name: "Before" },
 ]
 
-export const Settings = ({triggerButton}) => {
+export const Settings = () => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const history = useHistory();
@@ -62,11 +63,12 @@ export const Settings = ({triggerButton}) => {
 	const [notificationMinutes, setNotificationMinutes] = useState(2);
 
 	const [play] = useSound(ClickSound);
-	const [playWoodSound] = useSound(WoodSound);
-	const [playBirdSound] = useSound(BirdSound);
-	const [playChickenSound] = useSound(ChickenSound);
-	const [playCatSound] = useSound(CatSound);
-	const [playDogSound] = useSound(DogSound);
+	const [playWoodSound] = useSound(WoodSound, { volume: alarmVolume / 100});
+	const [playBirdSound] = useSound(BirdSound, { volume: alarmVolume / 100});
+	const [playChickenSound] = useSound(ChickenSound, { volume: alarmVolume / 100});
+	const [playCatSound] = useSound(CatSound, { volume: alarmVolume / 100});
+	const [playDogSound] = useSound(DogSound, { volume: alarmVolume / 100});
+	const [noPlaySound] = useSound("");
 
 	const playSounds = {
 		[WOOD]: playWoodSound,
@@ -74,17 +76,18 @@ export const Settings = ({triggerButton}) => {
 		[CHICKEN]: playChickenSound,
 		[CAT]: playCatSound, 
 		[DOG]: playDogSound,
+		[NONE]: noPlaySound,
 	}
 
 	const { 
 		loading: updateLoading, 
 		success: updateSuccess, 
-		error: updateError 
+		error: updateError,
 	} = useSelector(state => state.updateSettingState);
 	const { 
 		loading: resetLoading, 
 		success: resetSuccess, 
-		error: resetError 
+		error: resetError,
 	} = useSelector(state => state.resetSettingState);
 
 	useEffect(() => {
@@ -115,13 +118,21 @@ export const Settings = ({triggerButton}) => {
 		}
 	},[setting]);
 
-	// reload page when update or reset success
+	// navigate when success
 	useEffect(() => {
 		if (updateSuccess || resetSuccess) {
 			dispatch(exitSetting());
-			history.goBack();
+			history.push("/result/success")
 		}
 	},[updateSuccess, resetSuccess])
+
+	// navigate when error occur
+	useEffect(() => {
+		if (updateError || resetError) {
+			dispatch(exitSetting());
+			history.push("/result/error")
+		}
+	},[updateError, resetError])
 
 	const toggleStartBreaks = (event) => {
 		setAutoStartBreaks(event.target.checked);
@@ -182,6 +193,7 @@ export const Settings = ({triggerButton}) => {
 			<div className="popup-container">
 				{settingLoading 
 				? <CircularProgress style={{position: "absolute", color: "red"}} size={100}/> 
+				: settingError ? <p>Something wrong ! please try again !</p>
 				:<div style={{width: "100%"}}>
 					<div onClick={() => history.goBack()}>
 						<ArrowBackIcon className="back-btn"/>
@@ -199,17 +211,17 @@ export const Settings = ({triggerButton}) => {
 						<div className="popup-time-amount-box">
 							<div className="popup-time-box">
 								<p className="popup-time-input-label">{t("pomodoros")}</p>
-								<input type="number" value={pomoMinutes} placeholder={0} min={0}
+								<input type="number" value={pomoMinutes} placeholder={0} min={1}
 								onChange={(e) => setPomoMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
 							</div>
 							<div className="popup-time-box">
 								<p className="popup-time-input-label">{t("short_break")}</p>
-								<input type="number" value={shortMinutes} placeholder={0} min={0}
+								<input type="number" value={shortMinutes} placeholder={0} min={1}
 								onChange={(e) => setShortMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
 							</div>
 							<div className="popup-time-box">
 								<p className="popup-time-input-label">{t("long_break")}</p>
-								<input type="number" value={longMinutes} placeholder={0} min={0}
+								<input type="number" value={longMinutes} placeholder={0} min={1}
 								onChange={(e) => setLongMinutes(parseInt(e.target.value))} className="popup-number-input"></input>
 							</div>
 						</div>
@@ -230,7 +242,7 @@ export const Settings = ({triggerButton}) => {
 					<div className="popup-one-line-control">
 						<p className="popup-item-title">{t("long_break_interval")}</p>
 						<input type="number" className="popup-number-input" placeholder={0} value={longBreakInterval}
-							min={0} onChange={(e) => setLongBreakInterval(parseInt(e.target.value))}	
+							min={1} onChange={(e) => setLongBreakInterval(parseInt(e.target.value))}	
 						></input>
 					</div>
 					<hr></hr>
@@ -248,7 +260,7 @@ export const Settings = ({triggerButton}) => {
 							</div>
 							<div className="popup-alarm-repeat">
 								<p>{t('repeat')}</p>
-								<input type="number" className="popup-number-input popup-repeat-input" min={0}
+								<input type="number" className="popup-number-input popup-repeat-input" min={1} max={10}
 									placeholder={0} value={alarmRepeat} onChange={(e) => setAlarmRepeat(parseInt(e.target.value))}></input>
 							</div>
 						</div>
