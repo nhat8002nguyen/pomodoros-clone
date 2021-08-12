@@ -9,6 +9,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
 import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
 import { WOOD, CAT, BIRD, DOG, CHICKEN, NONE } from '../../constants/alarmSounds';
+import { TICKING_FAST, TICKING_SLOW, NONE as NONE_TICKING } from '../../constants/tickingSpeed';
 
 import { getSetting, resetSetting, updateSetting, exitSetting } from '../../redux/actions/settingActions';
 import { CircularProgress } from '@material-ui/core';
@@ -29,9 +30,9 @@ const alarmSounds = [
 	{id: 6, name: NONE},
 ] 
 const tickingSounds = [
-	{id: 1, name: "None"},
-	{id: 2, name: "Ticking Fast"},
-	{id: 3, name: "Ticking Slow"},
+	{id: 1, name: NONE_TICKING},
+	{id: 2, name: TICKING_FAST},
+	{id: 3, name: TICKING_SLOW},
 ];
 
 const notifyTypes = [

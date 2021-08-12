@@ -61,7 +61,7 @@ const Header = () => {
 
   return (
     <div className="header">
-      <p className="title">pomodoros</p>
+      <p className="title">Pomodoros</p>
       <div className="header-btn-group">
 				<div className="header-btn" onClick={() => goToSetting()}>
 					<p>{t('settings')}</p>

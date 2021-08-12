@@ -7,8 +7,9 @@ import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
 import { POMODOROS, SHORT_BREAK, LONG_BREAK } from '../../constants/timeTypes';
 import { pushNotification } from "../../helpers/pushNotification";
 import { WORK_NOTIFY, SHORT_BREAK_NOTIFY, LONG_BREAK_NOTIFY } from '../../constants/notificationConstants';
-import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
+import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound, FastTicking, SlowTicking } from '../../assets/sounds';
 import { WOOD, CAT, BIRD, DOG, CHICKEN, NONE } from '../../constants/alarmSounds';
+import { TICKING_FAST, TICKING_SLOW, NONE as NONE_TICKING } from '../../constants/tickingSpeed';
 import { getSetting } from "../../redux/actions/settingActions"; 
 import {Flash} from './Flash'
 import { POMODORO_COLOR, SHORT_BREAK_COLOR, LONG_BREAK_COLOR, POMODORO_AREA_COLOR, SHORT_BREAK_AREA_COLOR, 
@@ -34,6 +35,10 @@ export default function Main() {
 	const [alarmVolume, setAlarmVolume] = useState(39);
 	const [alarmRepeat, setAlarmRepeat] = useState(1);
 	const [alarmTimes, setAlarmTimes] = useState(1);
+	const [tickingSpeed, setTickingSpeed] = useState(NONE_TICKING);
+	const [tickingVolume, setTickingVolume] = useState(50);
+	const [ticking, setTicking] = useState(SlowTicking);
+	const [isTickingPlaying, setTickingPlaying] = useState(false);
 
 	const { userSignin } = useSelector(state => state.userSignin);
 	const { setting, loading, error } = useSelector(state => state.settingState);
@@ -43,6 +48,12 @@ export default function Main() {
 		volume: alarmVolume / 100, 
 		interrupt: true 
 	});
+	
+	const [playTicking, { stop: stopTicking }] = useSound(ticking, {
+		volume: tickingVolume / 100,
+		interrupt: true,
+		onend: () => setTickingPlaying(false),
+	});
 
 	const audioSounds = {
 		[WOOD]: WoodSound,
@@ -50,7 +61,9 @@ export default function Main() {
 		[CHICKEN]: ChickenSound,
 		[CAT]: CatSound, 
 		[DOG]: DogSound,
-		[NONE]: ""
+		[NONE]: "",
+		[TICKING_FAST]: FastTicking,
+		[TICKING_SLOW]: SlowTicking,
 	}
 
   const timeRun = useRef();
@@ -88,6 +101,9 @@ export default function Main() {
 			setAutoStartPomo(setting.autoStartPomodoro);
 			setAlarmVolume(setting.alarmVolume);
 			setAlarmRepeat(setting.alarmRepeat);
+			setTickingSpeed(setting.tickingSpeed);
+			setTickingVolume(setting.tickingVolume);
+			setTicking(audioSounds[setting.tickingSpeed]);
 		}
 	}, [setting])
 	
@@ -100,10 +116,28 @@ export default function Main() {
   useEffect(() => {
     if (runState === true) {
       triggerTime();
+			// run ticking if it's enable
+			if (tickingSpeed !== NONE_TICKING) {
+				playTicking();
+				setTickingPlaying(true);
+			}
     } else {
+			// stopTicking();	
+			// setTickingPlaying(false);
       clearInterval(timeRun.current);
     }
   }, [runState]);
+
+	// continue starting ticking if run state is true
+	useEffect(() => {
+		if (!isTickingPlaying && runState) {
+			playTicking();
+			setTickingPlaying(true);
+		} else if (isTickingPlaying && !runState) {
+			stopTicking();
+			setTickingPlaying(false);
+		}
+	},[isTickingPlaying, runState])
 
 	let triggerTime = () => {
 		clearInterval(timeRun.current);
