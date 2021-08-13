@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
+import useSound from 'use-sound';
+import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
 
 import { logout } from "../../redux/actions/userActions";
 
@@ -18,6 +20,8 @@ const Header = () => {
 	const [username, setUsername] = useState("");
 
 	const { userSignin, success } = useSelector(state => state.userSignin);
+
+	const [play] = useSound(ClickSound);
 
 	// check if keep signin is checked
 	useEffect(() => {
@@ -45,23 +49,27 @@ const Header = () => {
 		.then((t) => {
 			t('key'); // -> same as i18next.t
 		});
+		play();
 	}
 
 	const goToSetting = () => {
 		history.push("/settings");
+		play();
 	}
 
 	const goToSignin = () => {
 		history.push("/signin");
+		play();
 	}
 
 	const handleLogout = () => {
 		dispatch(logout())
+		play();
 	}
 
   return (
     <div className="header">
-      <p className="title">pomodoros</p>
+      <p className="title">Pomodoros</p>
       <div className="header-btn-group">
 				<div className="header-btn" onClick={() => goToSetting()}>
 					<p>{t('settings')}</p>
