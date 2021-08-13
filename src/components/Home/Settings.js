@@ -191,7 +191,7 @@ export const Settings = () => {
 	}
 
 	return (
-			<div className="popup-container">
+			<div className="popup-container" style={ darkMode ? {backgroundColor: "black", color: "white" } : null }>
 				{settingLoading 
 				? <CircularProgress style={{position: "absolute", color: "red"}} size={100}/> 
 				: settingError ? <p>Something wrong ! please try again !</p>

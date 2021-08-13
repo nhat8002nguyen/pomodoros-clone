@@ -122,10 +122,11 @@ export default function Main() {
 				setTickingPlaying(true);
 			}
     } else {
-			// stopTicking();	
-			// setTickingPlaying(false);
       clearInterval(timeRun.current);
     }
+		return () => {
+			stopTicking();
+		}
   }, [runState]);
 
 	// continue starting ticking if run state is true
