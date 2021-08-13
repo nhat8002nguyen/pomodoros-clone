@@ -2,8 +2,9 @@ import addNotification from 'react-push-notification';
 import { SIGNIN_SUCCESS, SIGNIN_FAIL, SIGNUP_SUCCESS, SIGNUP_FAIL } from '../redux/constants/userConstants';
 import { UPDATE_SETTING_SUCCESS, UPDATE_SETTING_FAIL, RESET_SETTING_SUCCESS, RESET_SETTING_FAIL
  } from '../redux/constants/settingConstants';		
+import { WORK_NOTIFY, SHORT_BREAK_NOTIFY, LONG_BREAK_NOTIFY } from '../constants/notificationConstants';
 
-export const pushNotification = (name) => {
+export const pushNotification = (name, detail = null) => {
 	const titles = {
 		"Pomodoros": "Time to work !",
 		"Short Break": "Time to take a short break !",
@@ -16,6 +17,9 @@ export const pushNotification = (name) => {
 		RESET_SETTING_SUCCESS: "Reset setting successfully !",
 		UPDATE_SETTING_FAIL: "Update setting fail !",
 		RESET_SETTING_FAIL: "Reset setting fail !",
+		WORK_NOTIFY: `${detail} minutes to start work`,
+		SHORT_BREAK_NOTIFY: `${detail} minutes to short break`,
+		LONG_BREAK_NOTIFY: `${detail} minutes to long break`,
 	}
 	const message = {
 		SIGNIN_FAIL: "Please try again",

@@ -5,12 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
 
-import { Settings } from "./Settings";
 import { logout } from "../../redux/actions/userActions";
 
 import Popup from "reactjs-popup";
 
-const Header = ({ onOpenSetting }) => {
+const Header = () => {
 	const { t, i18n } = useTranslation();
 	const [language, setLanguage] = useState(i18n.language);
 	const history = useHistory();
@@ -48,6 +47,10 @@ const Header = ({ onOpenSetting }) => {
 		});
 	}
 
+	const goToSetting = () => {
+		history.push("/settings");
+	}
+
 	const goToSignin = () => {
 		history.push("/signin");
 	}
@@ -60,11 +63,9 @@ const Header = ({ onOpenSetting }) => {
     <div className="header">
       <p className="title">pomodoros</p>
       <div className="header-btn-group">
-				<Settings triggerButton={
-					<div className="header-btn" onClick={() => onOpenSetting()}>
-						<p>{t('settings')}</p>
-					</div>
-				}/>
+				<div className="header-btn" onClick={() => goToSetting()}>
+					<p>{t('settings')}</p>
+				</div>
         
         {!isSignedIn ? <div className="header-btn" onClick={() => goToSignin()}>
           <p>{t('signIn')}</p>

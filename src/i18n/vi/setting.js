@@ -12,4 +12,6 @@ export const setting = {
 	"notification": "Thông báo",
 	"ok": "OK",
 	"reset": "Đặt lại",
+	"success": "Thành Công!",
+	"error": "Vui lòng thử lại !",
 }

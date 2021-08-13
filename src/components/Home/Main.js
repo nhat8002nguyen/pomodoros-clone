@@ -1,24 +1,78 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import { useTranslation } from "react-i18next";
 import useSound from 'use-sound';
 import ClickSound from '../../assets/sounds/Mouse-Click.mp3';
-import { pushNotification } from "../../helpers";
+import { POMODOROS, SHORT_BREAK, LONG_BREAK } from '../../constants/timeTypes';
+import { pushNotification } from "../../helpers/pushNotification";
+import { WORK_NOTIFY, SHORT_BREAK_NOTIFY, LONG_BREAK_NOTIFY } from '../../constants/notificationConstants';
+import { BirdSound, CatSound, ChickenSound, DogSound, WoodSound} from '../../assets/sounds';
+import { WOOD, CAT, BIRD, DOG, CHICKEN, NONE } from '../../constants/alarmSounds';
+import { getSetting } from "../../redux/actions/settingActions"; 
+import {Flash} from './Flash'
+import { POMODORO_COLOR, SHORT_BREAK_COLOR, LONG_BREAK_COLOR, POMODORO_AREA_COLOR, SHORT_BREAK_AREA_COLOR, 
+	LONG_BREAK_AREA_COLOR } from '../../constants/windowColors';
 
-export default function Main({setting}) {
+export default function Main() {
 	const { t } = useTranslation();
+	const dispatch = useDispatch();
 	const [pomodoro, setPomodoro] = useState(3);
 	const [shortBreak, setShortBreak] = useState(3);
 	const [longBreak, setLongBreak] = useState(3);
 	const [longBreakInterval, setLongBreakInterval] = useState(2);
-  const [timeType, setTimeType] = useState("Pomodoros");
+  const [timeType, setTimeType] = useState(POMODOROS);
   const [runState, setRunState] = useState(false);
   const [time, setTime] = useState(5);
   const [numPomo, setNumPomo] = useState(1);
   const [midAreaColor, setMidAreaColor] = useState("#f06e65");
+	const [notificationMinutes, setNotificationMinutes] = useState(5);
+	const [alarmSound, setAlarmSound] = useState(WOOD);
+	const [audio, setAudio] = useState(WoodSound);
+	const [autoStartBreaks, setAutoStartBreaks] = useState(true);
+	const [autoStartPomo, setAutoStartPomo] = useState(true);
+	const [alarmVolume, setAlarmVolume] = useState(39);
+	const [alarmRepeat, setAlarmRepeat] = useState(1);
+	const [alarmTimes, setAlarmTimes] = useState(1);
+
+	const { userSignin } = useSelector(state => state.userSignin);
+	const { setting, loading, error } = useSelector(state => state.settingState);
+
 	const [play] = useSound(ClickSound);
+	const [playAlarmSound] = useSound(audio, { 
+		volume: alarmVolume / 100, 
+		interrupt: true 
+	});
+
+	const audioSounds = {
+		[WOOD]: WoodSound,
+		[BIRD]: BirdSound,
+		[CHICKEN]: ChickenSound,
+		[CAT]: CatSound, 
+		[DOG]: DogSound,
+		[NONE]: ""
+	}
 
   const timeRun = useRef();
+	const alarmRun = useRef();
+
+	useEffect(() => {
+		let mounted = true;
+		return () => {
+			clearInterval(timeRun.current); 
+			clearInterval(alarmRun.current);
+			mounted = false;
+		}
+	},[])
+
+	useEffect(() => {
+		let isMounted = true;
+		const username = userSignin?.username;
+		if (isMounted && username?.length > 0)
+			dispatch(getSetting({username}));
+
+		return () => isMounted = false;
+	}, [userSignin])
 
 	// get time data from setting api
 	useEffect(() => {
@@ -27,6 +81,13 @@ export default function Main({setting}) {
 			setShortBreak(setting.shortBreak*60);
 			setLongBreak(setting.longBreak*60);
 			setLongBreakInterval(setting.longBreakInterval);
+			setNotificationMinutes(setting.notificationMinutes);
+			setAlarmSound(setting.alarmSound);
+			setAudio(audioSounds[setting.alarmSound]);
+			setAutoStartBreaks(setting.autoStartBreak);
+			setAutoStartPomo(setting.autoStartPomodoro);
+			setAlarmVolume(setting.alarmVolume);
+			setAlarmRepeat(setting.alarmRepeat);
 		}
 	}, [setting])
 	
@@ -49,33 +110,66 @@ export default function Main({setting}) {
   	timeRun.current = setInterval(() => {
         setTime((prev) => prev - 1);
     }, 1000);
-		pushNotification(timeType);
 	}
+
+	// repeat alarm sound with repeat times
+	useEffect(() => {
+		if (alarmTimes >= alarmRepeat) {
+			clearInterval(alarmRun.current);
+			setAlarmTimes(1);
+		}
+	}, [alarmTimes])
 
   useEffect(() => {
     // when time = -1 for a bit delay before move to next time type
     if (time === -1) {
       clearInterval(timeRun.current);
       changeNextTimeType();
-    }
+    } else if (time === 60 * notificationMinutes) {
+			// push noti when remain time
+			if (timeType === POMODOROS && numPomo < longBreakInterval) {
+				pushNotification(SHORT_BREAK_NOTIFY, notificationMinutes)
+    	} else if (timeType === POMODOROS && numPomo === longBreakInterval) {
+				pushNotification(LONG_BREAK_NOTIFY, notificationMinutes);
+			} else {
+				pushNotification(WORK_NOTIFY, notificationMinutes);
+			}
+		}
   }, [time, longBreakInterval]);
 
 	const changeNextTimeType = () => {
     let newType;
-    if (timeType === "Pomodoros" && numPomo < longBreakInterval) {
-      newType = "Short Break";
+    if (timeType === POMODOROS && numPomo < longBreakInterval) {
+      newType = SHORT_BREAK;
       setNumPomo((prev) => prev + 1);
       setMidAreaColor("#54bf66");
-    } else if (timeType === "Pomodoros" && numPomo === longBreakInterval) {
-      newType = "Long Break";
+			setRunState(autoStartBreaks ? true : false);
+    } else if (timeType === POMODOROS && numPomo === longBreakInterval) {
+      newType = LONG_BREAK;
       setNumPomo(1);
       setMidAreaColor("#5a84d1");
+			setRunState(autoStartBreaks ? true : false);
     } else {
-      newType = "Pomodoros";
+      newType = POMODOROS;
       setMidAreaColor("#f06e65");
+			setRunState(autoStartPomo ? true : false);
     }
+		pushNotificationAndSound(newType);
     setTimeType(newType);
   };
+
+	const pushNotificationAndSound = (curTimeType) => {
+		pushNotification(curTimeType);
+		// play sound
+		if (alarmRepeat >= 1) playAlarmSound();
+		if (alarmRepeat > 1) {
+			alarmRun.current && clearInterval(alarmRun.current)
+			alarmRun.current = setInterval(() => { 
+				playAlarmSound(); 
+				setAlarmTimes(prev => prev+1);
+			}, 2500);
+		}
+	}
 
   useEffect(() => {
     resetTimeEachType();
@@ -84,16 +178,16 @@ export default function Main({setting}) {
   }, [timeType, pomodoro, shortBreak, longBreak]);
 
   const resetTimeEachType = () => {
-    if (timeType === "Short Break") setTime(shortBreak);
-    else if (timeType === "Pomodoros") setTime(pomodoro);
+    if (timeType === SHORT_BREAK) setTime(shortBreak);
+    else if (timeType === POMODOROS) setTime(pomodoro);
     else setTime(longBreak);
   };
 
   const chageBodyBackgroundColor = () => {
     document.body.style.backgroundColor =
-      (timeType === "Short Break" && "#16a82e") ||
-      (timeType === "Pomodoros" && "#f25b50") ||
-      (timeType === "Long Break" && "#1e5dd4");
+      (timeType === SHORT_BREAK && SHORT_BREAK_COLOR) ||
+      (timeType === POMODOROS && POMODORO_COLOR) ||
+      (timeType === LONG_BREAK && LONG_BREAK_COLOR);
   };
 
   const onMoveTo = (type) => {
@@ -105,9 +199,9 @@ export default function Main({setting}) {
 
 	const changeMidAreaColor = (type) => {
 		const areaColors = {
-			"Pomodoros": "#f06e65",
-			"Short Break": "#54bf66",
-			"Long Break": "#5a84d1",
+			[POMODOROS]: POMODORO_AREA_COLOR,
+			[SHORT_BREAK]: SHORT_BREAK_AREA_COLOR,
+			[LONG_BREAK]: LONG_BREAK_AREA_COLOR,
 		}
 		setMidAreaColor(areaColors[type]);
 	}
@@ -129,32 +223,39 @@ export default function Main({setting}) {
 
   return (
     <div className="main-container">
-      <div className="time-type-area" style={{ backgroundColor: midAreaColor }}>
+			{loading ? <Flash />
+      :<div className="time-type-area" style={{ backgroundColor: midAreaColor }}>
         <div className="time-type-group">
           <div
             className="time-type-box"
             style={
-              timeType !== "Pomodoros" ? { backgroundColor: "#f06e65" } : null
+              timeType === SHORT_BREAK ? { backgroundColor: SHORT_BREAK_AREA_COLOR}  
+							: timeType === LONG_BREAK ? { backgroundColor: LONG_BREAK_AREA_COLOR}  
+							: { backgroundColor: POMODORO_COLOR }
             }
-            onClick={() => onMoveTo("Pomodoros")}
+            onClick={() => onMoveTo(POMODOROS)}
           >
             <p>Pomodoros</p>
           </div>
           <div
             className="time-type-box"
             style={
-              timeType !== "Short Break" ? { backgroundColor: "#f06e65" } : null
+              timeType === POMODOROS ? { backgroundColor: POMODORO_AREA_COLOR }  
+							: timeType === LONG_BREAK ? { backgroundColor: LONG_BREAK_AREA_COLOR}  
+							: { backgroundColor: SHORT_BREAK_COLOR }
             }
-            onClick={() => onMoveTo("Short Break")}
+            onClick={() => onMoveTo(SHORT_BREAK)}
           >
             <p>{t('short_break')}</p>
           </div>
           <div
             className="time-type-box"
             style={
-              timeType !== "Long Break" ? { backgroundColor: "#f06e65" } : null
+              timeType === POMODOROS ? { backgroundColor: POMODORO_AREA_COLOR }  
+							: timeType === SHORT_BREAK ? { backgroundColor: SHORT_BREAK_AREA_COLOR}  
+							: { backgroundColor: LONG_BREAK_COLOR }
             }
-            onClick={() => onMoveTo("Long Break")}
+            onClick={() => onMoveTo(LONG_BREAK)}
           >
             <p>{t('long_break')}</p>
           </div>
@@ -176,7 +277,7 @@ export default function Main({setting}) {
             <SkipNextIcon fontSize="large" />
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
