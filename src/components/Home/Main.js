@@ -14,8 +14,9 @@ import { getSetting } from "../../redux/actions/settingActions";
 import {Flash} from './Flash'
 import { POMODORO_COLOR, SHORT_BREAK_COLOR, LONG_BREAK_COLOR, POMODORO_AREA_COLOR, SHORT_BREAK_AREA_COLOR, 
 	LONG_BREAK_AREA_COLOR } from '../../constants/windowColors';
+import {themes, ThemeContext} from "../../contexts/ThemeContext";
 
-export default function Main() {
+export default function Main({onChangeTheme}) {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const [pomodoro, setPomodoro] = useState(3);
@@ -190,6 +191,7 @@ export default function Main() {
 			setRunState(autoStartPomo ? true : false);
     }
 		pushNotificationAndSound(newType);
+		changeHomeTheme(newType);
     setTimeType(newType);
   };
 
@@ -204,6 +206,15 @@ export default function Main() {
 				setAlarmTimes(prev => prev+1);
 			}, 2500);
 		}
+	}
+
+	const changeHomeTheme = (timeType) => {
+		const ths = {
+			[POMODOROS]: themes.pomodoroTheme,
+			[SHORT_BREAK]: themes.shortBreakTheme,
+			[LONG_BREAK]: themes.longBreakTheme,
+		}
+		onChangeTheme(ths[timeType]);
 	}
 
   useEffect(() => {
@@ -229,6 +240,7 @@ export default function Main() {
 		timeType === type && resetTimeEachType();
     setTimeType(type);
 		changeMidAreaColor(type);
+		changeHomeTheme(type);
     onStopTime();
   };
 
