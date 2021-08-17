@@ -1,186 +1,199 @@
-import React, {useState, useContext} from 'react';
-import { useTranslation } from 'react-i18next';
+import React, {useState, useEffect, useRef} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { POMODORO_COLOR } from '../../../constants/windowColors';
-import {ThemeContext} from "../../../contexts/ThemeContext";
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Popup from 'reactjs-popup';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DoneIcon from '@material-ui/icons/Done';
+import SaveIcon from '@material-ui/icons/Save';
+import AddIcon from '@material-ui/icons/Add';
+
 import { taskList } from '../../../data/task';
+import { v4 } from  'uuid';
+import { saveDonePomo } from '../../../redux/actions/taskAction';
+import { EditableTaskList } from './EditableTaskList';
+import { ToggleableTaskForm } from './ToggleableTaskForm';
+import { TaskListStatus } from './TaskListStatus';
 
 
-export default function TaskView() {
-
-	const { t } = useTranslation();
-	const { theme } = useContext(ThemeContext);
-
-	const TView = () => {
-		return (
-			<div className="task-area">
-				<div className="current-task-title">
-					<p style={{fontSize: "16px", opacity: "0.5"}}>WORKING ON</p>
-					<p>Learn by project-based</p>
-				</div>
-				<div className="task-dashboard">
-					<div className="task-header">
-						<div className="task-header-row">
-							<p>Task</p>
-							<MoreVertIcon style={{cursor: "pointer"}}/>
-						</div>
-						<hr style={{color: "white" }}></hr>
-					</div>
-					<EditableTaskList />
-					<ToggleableTaskForm />
-				</div>
-				<TaskListStatus />
-			</div>
-		)
-	}
-
-	const EditableTaskList = () => {
-		const [focusingTask, setFocusingTask] = useState(null);
-
-
-		return (
-			<div className="editable-task-list">
-				{taskList.map(item => <EditableTask 
-					key={item.id} {...item}
-					onFocus={(id) => setFocusingTask(id)}
-					focusId={focusingTask}
-				/>)}
-			</div>
-		)
-	}
-
-	const EditableTask = (props) => {
-		const [isOpen, setOpen] = useState(false);
-		return (
-			<div className="editable-task">
-				{isOpen ? <TaskForm {...props} onClose={() => setOpen(false)}/> 
-				: <TaskItem {...props} onOpenForm={() => setOpen(true)}/>}
-			</div>
-		)
-	}
-
-	const ToggleableTaskForm = () => {
-		const [isOpen, setOpen] = useState(false);
-
-		const handleToggle = () => {
-			setOpen(!isOpen);
+export default function TaskView(props) {
+	const dispatch = useDispatch();
+	const [initialItem, setInitialItem] = useState({
+		title: "",
+		totalPomo: 0,
+		donePomo: 0,
+		note: null,
+		done: false
+	});
+	const [pomoMinutes, setPomoMinutes] = useState(25);
+	const { setting } = useSelector(state => state.settingState);
+	useEffect(() => {
+		if (setting && Object.keys(setting).length > 0) {
+			setPomoMinutes(setting.pomodoro);
 		}
-		return (
-			<div>
-				{isOpen ? <TaskForm onClose={() => {setOpen(false)}}/> 
-				:<div className="task-addition" onClick={() => handleToggle()}
-					style={{backgroundColor: theme.background}}>
-					<div>
-						<AddCircleIcon />
-						<p>{t("add-task")}</p>
-					</div>
-				</div>}
-			</div>
-		)
-	}
+	},[setting])
 
-	const TaskForm = (props) => {
-		const [numExt, setNumExt] = useState(props.totalPomo || 1);
-		const [title, setTitle] = useState(props.title || "");
-		const [noteOpen, setNoteOpen] = useState(props.note ? true : false);
-		const [note, setNote] = useState(props.note || "");
-
-		const handleSubmit = (e) => {
-			e.preventDefault();
-		}
-
-		const handleCloseForm = () => {
-			props.onClose();	
-		}
-
-		const handleIncEst = () => {
-			numExt < 100 && setNumExt(prev => prev+1);
-		}
-
-		const handleDecEst = () => {
-			numExt > 0 && setNumExt(prev => prev-1);
-		}
-
-		return (
-			<form onSubmit={(e) => handleSubmit(e)} className="task-form">
-				<div className="task-form-body">
-					<input id="task-form-input-1" type="text" placeholder="What are you working on ?"
-						value={title} onChange={(e) => setTitle(e.target.value)}></input>
-					<p id="task-form-label-1">Est pomodoros</p>
-					<div className="task-form-row">
-						<input type="number" min={0} value={numExt} onChange={(e) => setNumExt(e.target.value)}></input>
-						<ExpandLessIcon className="task-form-count-icon" onClick={() => handleIncEst()}/>			
-						<ExpandMoreIcon className="task-form-count-icon" onClick={() => handleDecEst()}/>
-					</div>
-					<div className="task-form-addition" 
-						style={noteOpen ? {flexDirection: "column", alignItems: "flex-start"} : null}>
-						{noteOpen ? <textarea placeholder="add note" className="task-form-add-note" value={note} 
-								onChange={(e) => setNote(e.target.value)}></textarea> 
-							: <p onClick={() => setNoteOpen(true)}>+Add Note</p>}
-						<p>+Add Project</p>
-					</div>
-				</div>
-				<div className="task-form-buttons">
-					<div className="task-form-button1-area">
-						<input className="task-form-button-1" type="button" value={t("delete")}></input>
-					</div>
-					<input className="task-form-button-2" type="button" value={t("cancel")}
-						onClick={() => handleCloseForm()}	
-					></input>
-					<input className="task-form-button-3" type="submit" value={t("save")}></input>
-				</div>
-			</form>
-		)
-	}
-
-	const TaskItem = (props) => {
-		const [isDone, setDone] = useState(props.done || false);
-		const [mouseOver, setMouseOver] = useState(false);
-		const toggleItem = () => {
-			setDone(!isDone);
-		}
-		
-		const handleFocus = () => {
-			props.onFocus(props.id);
-		}
-		return (
-			<div className="task-item-area" onClick={() => handleFocus()} 
-				onMouseOver={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)}>
-				<div className="task-item-focus" 
-					style={props.focusId === props.id ? { backgroundColor: "black" } 
-					: mouseOver ? {backgroundColor: "#dedede"} : null}>
-				</div>    
-				<div className="task-item-container">
-					<div className="task-item">
-						<CheckCircleIcon className="task-item-icon" fontSize="large" 
-							style={isDone ? {color: POMODORO_COLOR, opacity: 1} : null}
-							onClick={() => toggleItem()}/>			
-						<p className="task-item-title"
-							style={isDone ? {textDecoration: "line-through", opacity: "0.3"} : null}
-						>{props.title}</p>
-						<p className="task-item-count">{`${props.donePomo}/${props.totalPomo}`}</p>
-						<MoreVertIcon className="task-item-option" onClick={() => props.onOpenForm()}/>
-					</div>
-					{props.note && <div className="task-item-note">
-						<p>{props.note}</p>
-					</div>}
-				</div>
-			</div>
-		)
-	}
-
-	const TaskListStatus = () => {
-		return (
-			<div className="task-list-status" style={{backgroundColor: theme.foreground}}>
-				<p>{`Est: 16   Act: 7   Finish at 21:30`}</p>
-			</div>
-		)
-	}
+	const [list, setList] = useState(taskList);
+	const [focusId, setFocusId] = useState(null);
+	const [formOpenId, setFormOpenId] = useState(null);
+	const [estCount, setEstCount] = useState(taskList.reduce((acc,cur) => cur.totalPomo + acc, 0) || 0);
+	const [actCount, setActCount] = useState(taskList.reduce((acc, cur) => cur.donePomo + acc, 0) || 0);
+	const [endTime, setEndTime] = useState("");
 	
-	return <TView></TView>;
+	const taskState = useSelector(state => state.taskState);
+
+	const popupRef = useRef();
+
+	// update TaskListStatus when list change
+	useEffect(() => {
+		const est = list.reduce((acc,cur) => cur.totalPomo + acc, 0);
+		const act = list.reduce((acc, cur) => acc + cur.donePomo, 0);
+		setEstCount(est);
+		setActCount(act);
+
+		if (est - act >= 0 && pomoMinutes > 0) {
+			let dt = new Date();
+			dt.setMinutes(dt.getMinutes() + (est - act)*pomoMinutes);
+			const displayedTime = dt.getHours() + ":" + dt.getMinutes()%60;
+			setEndTime(displayedTime);
+		}
+	}, [list, pomoMinutes])	
+
+	useEffect(() => {
+		if (focusId !== null) {
+			setList(prev => prev.map(item => item.id === focusId ? {...item, donePomo: taskState} : item));
+		}
+	}, [taskState])
+
+	const handleOnFocus = (id) => {
+		setFocusId(id);
+		const donePomo = list.find(item => item.id === id).donePomo;
+		donePomo && dispatch(saveDonePomo(donePomo));
+	}
+
+	const deleteTask = (id) => {
+		setList(prev => prev.filter(item => item.id != id));
+	};
+
+	const updateTask = (id, contents) => {
+		setList(prev => prev.map(item => item.id === id ? {id, ...item, ...contents} : item));
+	};
+
+	const addTask = (contents) => {
+		setList(prev => [...prev].concat({id: v4(), ...initialItem, ...contents}));
+	};
+
+	const handleOnDragEnd = (result) => {
+		if (!result.destination) return;
+		const reorderedList = [...list];
+		const [reorderedItem] = reorderedList.splice(result.source.index, 1);
+		reorderedList.splice(result.destination.index, 0, reorderedItem);
+		setList(reorderedList);
+	}
+
+	const handleClearAllTasks = () => {
+		closePopup();
+		clearAllTasks()
+	}
+	const clearAllTasks = () => setList([]);
+	
+	const closePopup = () => popupRef.current.close();
+
+	const handleClearFinishTasks = () => {
+		closePopup();
+		clearFinistTasks();
+	}
+	const clearFinistTasks = () => setList(list.filter(item => !item.done));
+
+	const handleClearActs = () => {
+		closePopup();
+		clearActs();
+	}
+	const clearActs = () => setList(list.map(item => ({...item, donePomo: 0})));
+
+	const handleSaveAsTemplate = () => {
+		closePopup();
+		openSaveTemplateView();
+	}
+
+	const openSaveTemplateView = () => {
+	}
+
+	const handleAddFromTemplates = () => {
+		closePopup();
+		openAddFromTemplatesView()
+	}
+
+	const openAddFromTemplatesView = () => {
+	}
+
+
+	return (
+		<div className="task-area">
+			<div className="current-task-title">
+				<p style={{fontSize: "16px", opacity: "0.5"}}>WORKING ON</p>
+				<p>Learn by project-based</p>
+			</div>
+			<div className="task-dashboard">
+				<div className="task-header">
+					<div className="task-header-row">
+						<p>Task</p>
+						<Popup ref={popupRef} className="task-header-option-container" trigger={
+							<MoreVertIcon 
+								style={{cursor: "pointer", backgroundColor: "white", opacity: "0.2", color: "black", borderRadius: "5px"}}>
+							</MoreVertIcon>
+						} position="bottom right">
+							<div className="task-header-options">
+								<div onClick={() => handleClearAllTasks()} className="task-header-option">
+									<DeleteIcon color="secondary"/>
+									<p>Clear all tasks</p>
+								</div>
+								<div onClick={() => handleClearFinishTasks()} className="task-header-option">
+									<DeleteIcon color="secondary"/>
+									<p>Clear finist tasks</p>
+								</div>
+								<div onClick={() => handleClearActs()} className="task-header-option">
+									<DoneIcon color="primary"/>
+									<p>Clear act pomodoros</p>
+								</div>
+								<div onClick={() => handleSaveAsTemplate()} className="task-header-option">
+									<SaveIcon />
+									<p>Save as template</p>
+								</div>
+								<div onClick={() => handleAddFromTemplates()} className="task-header-option">
+									<AddIcon />
+									<p>Add from templates</p>
+								</div>
+							</div>
+  					</Popup>
+						
+					</div>
+					<hr style={{color: "white" }}></hr>
+				</div>
+				<EditableTaskList 
+					list={list} 
+					onOpenForm={(id) => setFormOpenId(id)}
+					formOpenId={formOpenId}
+					onFocus={(id) => handleOnFocus(id)} 
+					focusId={focusId} 
+					onDeleteTask={(id) => deleteTask(id)}
+					onUpdateTask={(id, contents) => updateTask(id, contents)}
+					onDragEnd={(result) => handleOnDragEnd(result)}	
+				/>
+				<ToggleableTaskForm formOpenId={formOpenId} onOpenForm={(id) => setFormOpenId(id)} onAddTask={(contents) => addTask(contents)}/>
+			</div>
+			<TaskListStatus estCount={estCount} actCount={actCount} endTime={endTime}/>
+		</div>
+	)
 }
+
+
+
+
+
+
+
+
+
+
+	

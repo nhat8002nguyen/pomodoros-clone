@@ -1,6 +1,8 @@
+import { v4 } from 'uuid';
+
 export const taskList = [
 	{
-		id: 1,
+		id: v4(),
 		title: "Read react book",
 		totalPomo: 10,
 		donePomo: 10,
@@ -8,7 +10,7 @@ export const taskList = [
 		done: true,
 	},
 	{
-		id: 2,
+		id: v4(),
 		title: "Do leetcode",
 		totalPomo: 9,
 		donePomo: 5,
@@ -16,7 +18,7 @@ export const taskList = [
 		done: false,
 	},
 	{
-		id: 3,
+		id: v4(),
 		title: "Read java book",
 		totalPomo: 6,
 		donePomo: 5,

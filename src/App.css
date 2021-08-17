@@ -502,6 +502,27 @@ form {
 	margin-bottom: 10px;
 }
 
+.task-header-options {
+	font-size: var(--fontSizeNormal);
+	color: black;
+	width: 200px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+}
+
+.task-header-option {
+	cursor: pointer;
+	padding: 5px 10px 5px 10px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.task-header-option:hover {
+	background-color: rgb(182, 182, 182);
+}
+
 .editable-task-list {
 	margin-top: 20px;
 }
@@ -533,6 +554,7 @@ form {
 	color: black;
 	border-radius: 10px;
 	padding-bottom: 0px;
+	cursor: pointer;
 }
 
 .task-form-body {
@@ -716,10 +738,6 @@ form {
 	margin: auto;
 	text-align: center;
 }
-
-
-
-
 
 
 
