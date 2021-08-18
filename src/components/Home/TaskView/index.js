@@ -14,6 +14,8 @@ import { saveDonePomo } from '../../../redux/actions/taskAction';
 import { EditableTaskList } from './EditableTaskList';
 import { ToggleableTaskForm } from './ToggleableTaskForm';
 import { TaskListStatus } from './TaskListStatus';
+import SaveTemplateDialog from './SaveTemplateDialog';
+import AddTemplateDialog from './AddTemplateDialog';
 
 
 export default function TaskView(props) {
@@ -39,6 +41,7 @@ export default function TaskView(props) {
 	const [estCount, setEstCount] = useState(taskList.reduce((acc,cur) => cur.totalPomo + acc, 0) || 0);
 	const [actCount, setActCount] = useState(taskList.reduce((acc, cur) => cur.donePomo + acc, 0) || 0);
 	const [endTime, setEndTime] = useState("");
+	const [isDialogOpen, setDialogOpen] = useState();
 	
 	const taskState = useSelector(state => state.taskState);
 
@@ -111,21 +114,23 @@ export default function TaskView(props) {
 	}
 	const clearActs = () => setList(list.map(item => ({...item, donePomo: 0})));
 
-	const handleSaveAsTemplate = () => {
-		closePopup();
-		openSaveTemplateView();
-	}
+	// const handleSaveAsTemplate = () => {
+	// 	closePopup();
+	// 	openSaveTemplateView();
+	// }
 
-	const openSaveTemplateView = () => {
-	}
+	// const openSaveTemplateView = () => {
+	// 	setSaveDialogOpen(true);
+	// }
 
-	const handleAddFromTemplates = () => {
-		closePopup();
-		openAddFromTemplatesView()
-	}
+	// const handleAddFromTemplates = () => {
+	// 	closePopup();
+	// 	openAddFromTemplatesView()
+	// }
 
-	const openAddFromTemplatesView = () => {
-	}
+	// const openAddFromTemplatesView = () => {
+	// 	setAddDialogOpen(true);	
+	// }
 
 
 	return (
@@ -138,7 +143,7 @@ export default function TaskView(props) {
 				<div className="task-header">
 					<div className="task-header-row">
 						<p>Task</p>
-						<Popup ref={popupRef} className="task-header-option-container" trigger={
+						<Popup closeOnDocumentClick={!isDialogOpen} ref={popupRef} className="task-header-option-container" trigger={
 							<MoreVertIcon 
 								style={{cursor: "pointer", backgroundColor: "white", opacity: "0.2", color: "black", borderRadius: "5px"}}>
 							</MoreVertIcon>
@@ -156,17 +161,10 @@ export default function TaskView(props) {
 									<DoneIcon color="primary"/>
 									<p>Clear act pomodoros</p>
 								</div>
-								<div onClick={() => handleSaveAsTemplate()} className="task-header-option">
-									<SaveIcon />
-									<p>Save as template</p>
-								</div>
-								<div onClick={() => handleAddFromTemplates()} className="task-header-option">
-									<AddIcon />
-									<p>Add from templates</p>
-								</div>
+								<SaveTemplateDialog onDialogOpen={() => setDialogOpen(true)} onClose={() => setDialogOpen(false)}/>
+								<AddTemplateDialog onDialogOpen={() => setDialogOpen(true)} onClose={() => setDialogOpen(false)}/>	
 							</div>
   					</Popup>
-						
 					</div>
 					<hr style={{color: "white" }}></hr>
 				</div>

@@ -739,7 +739,31 @@ form {
 	text-align: center;
 }
 
+.add-template-item {
+	border-top: 1px solid grey;
+	display:flex;
+	justify-content: space-around;
+	align-items: center;
+	width: 500px;
+	padding-top: 10px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
 
+.add-template-item:hover {
+	background-color: rgb(209, 209, 209);
+}
+
+.save-template-input {
+	padding: 20px 20px 20px 40px;
+	width: 500px;
+	border: none;
+	font-size: large;
+}
+
+.save-template-input:focus {
+	outline: none;
+}
 
 
 @media only screen and (max-width: 680px) {
