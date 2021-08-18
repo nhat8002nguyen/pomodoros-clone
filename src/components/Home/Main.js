@@ -14,8 +14,10 @@ import { getSetting } from "../../redux/actions/settingActions";
 import {Flash} from './Flash'
 import { POMODORO_COLOR, SHORT_BREAK_COLOR, LONG_BREAK_COLOR, POMODORO_AREA_COLOR, SHORT_BREAK_AREA_COLOR, 
 	LONG_BREAK_AREA_COLOR } from '../../constants/windowColors';
+import {themes, ThemeContext} from "../../contexts/ThemeContext";
+import { incDonePomo } from "../../redux/actions/taskAction";
 
-export default function Main() {
+export default function Main({onChangeTheme}) {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const [pomodoro, setPomodoro] = useState(3);
@@ -179,17 +181,21 @@ export default function Main() {
       setNumPomo((prev) => prev + 1);
       setMidAreaColor("#54bf66");
 			setRunState(autoStartBreaks ? true : false);
+			increaseFocusedTaskPomo();
     } else if (timeType === POMODOROS && numPomo === longBreakInterval) {
       newType = LONG_BREAK;
       setNumPomo(1);
       setMidAreaColor("#5a84d1");
 			setRunState(autoStartBreaks ? true : false);
+			increaseFocusedTaskPomo();
     } else {
       newType = POMODOROS;
       setMidAreaColor("#f06e65");
 			setRunState(autoStartPomo ? true : false);
     }
 		pushNotificationAndSound(newType);
+		changeHomeTheme(newType);
+		// increase current task pomo number
     setTimeType(newType);
   };
 
@@ -204,6 +210,19 @@ export default function Main() {
 				setAlarmTimes(prev => prev+1);
 			}, 2500);
 		}
+	}
+
+	const changeHomeTheme = (timeType) => {
+		const ths = {
+			[POMODOROS]: themes.pomodoroTheme,
+			[SHORT_BREAK]: themes.shortBreakTheme,
+			[LONG_BREAK]: themes.longBreakTheme,
+		}
+		onChangeTheme(ths[timeType]);
+	}
+
+	const increaseFocusedTaskPomo = () => {
+		dispatch(incDonePomo());
 	}
 
   useEffect(() => {
@@ -229,6 +248,7 @@ export default function Main() {
 		timeType === type && resetTimeEachType();
     setTimeType(type);
 		changeMidAreaColor(type);
+		changeHomeTheme(type);
     onStopTime();
   };
 
