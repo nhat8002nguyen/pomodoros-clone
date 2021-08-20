@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { POMODORO_COLOR } from '../../../constants/windowColors';
@@ -9,6 +10,8 @@ export const TaskItem = (props) => {
 	const [mouseOver, setMouseOver] = useState(false);
 	const toggleItem = () => {
 		setDone(!isDone);
+		// update DB
+		props.onTaskDone(props.id);
 	}
 	
 	const handleFocus = () => {

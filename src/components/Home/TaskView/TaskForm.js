@@ -18,7 +18,7 @@ export const TaskForm = (props) => {
 			return false;
 		}
 		if (props.id) {
-			props.onUpdateTask(props.id, {title, totalPomo, note});
+			props.onUpdateTask(props.id, {title, totalPomo, note, done: props.done, donePomo: props.donePomo});
 		} else {
 			props.onAddTask({title, totalPomo, note});
 		}

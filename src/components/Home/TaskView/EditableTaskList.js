@@ -11,7 +11,7 @@ export const EditableTaskList = (props) => {
 				{(provided) => (
 					<div className="editable-task-list" {...provided.droppableProps} ref={provided.innerRef}>
 						{props.list.map((item, index) => 
-						<Draggable key={item.id} draggableId={`${item.id}`} index={index}>
+						<Draggable key={`${item.id}`} draggableId={`${item.id}`} index={index}>
 							{(provided) => (
 								<EditableTask ref={provided.innerRef} provided={provided} 
 								{...item} {...props}/>

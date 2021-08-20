@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 
 import { signInReducer, signUpReducer } from '../reducers/userReducers';
 import { getSettingReducer, resetSettingReducer, updateSettingReducer } from '../reducers/settingReducers';
-import { taskReducer } from '../reducers/taskReducers';
+import { addTaskReducer, deleteTaskReducer, taskListReducer, taskReducer } from '../reducers/taskReducers';
 
 
 export const configureStore = () => {
@@ -23,6 +23,9 @@ export const configureStore = () => {
 		updateSettingState: updateSettingReducer,
 		resetSettingState: resetSettingReducer,
 		taskState: taskReducer,
+		taskListState: taskListReducer,
+		addTaskState: addTaskReducer,
+		deleteTaskState: deleteTaskReducer
 	});
 	const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
