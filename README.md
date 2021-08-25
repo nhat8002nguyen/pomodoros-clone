@@ -4,8 +4,6 @@ https://www.youtube.com/watch?v=goV6BjWYIIM&t=14s&ab_channel=NhatNguyen
 ## UI
 ### PC
 ![Screenshot (17)](https://user-images.githubusercontent.com/58263449/130754866-a145b30a-4220-4192-be0a-ac86bf9f805f.png)
-![Screenshot (15)](https://user-images.githubusercontent.com/58263449/130754892-b44fb2b2-18c7-4703-b8e1-6c971b305ad5.png)
-![Screenshot (16)](https://user-images.githubusercontent.com/58263449/130754910-e15014de-2894-4c35-8baa-46ced629fccc.png)
 ![Screenshot (19)](https://user-images.githubusercontent.com/58263449/130754921-44f270a5-63ef-41db-9f24-6313e434f2e6.png)
 
 ### Responsive
