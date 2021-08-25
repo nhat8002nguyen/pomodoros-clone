@@ -1,3 +1,8 @@
+## Engines
+- ReactJS, Redux(thunk), HTML5, CSS3, MaterialUI, 
+- Spring Data, MySQL 
+- AWS Service: Elastic Beanstalk, RDS
+
 ## Demo app
 https://www.youtube.com/watch?v=goV6BjWYIIM&t=14s&ab_channel=NhatNguyen
 
