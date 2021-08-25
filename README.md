@@ -1,3 +1,6 @@
+## Demo app
+https://www.youtube.com/watch?v=goV6BjWYIIM&t=14s&ab_channel=NhatNguyen
+
 ## UI
 # PC
 ![Screenshot (17)](https://user-images.githubusercontent.com/58263449/130754866-a145b30a-4220-4192-be0a-ac86bf9f805f.png)
@@ -12,7 +15,4 @@
 <img src="https://user-images.githubusercontent.com/58263449/130755217-ac78d815-6b85-4e32-9d75-f42988893d77.jpg" width="200" height="400">
 
 
-## Demo app
-
-https://www.youtube.com/watch?v=goV6BjWYIIM&t=14s&ab_channel=NhatNguyen
 
