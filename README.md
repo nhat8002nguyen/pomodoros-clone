@@ -1,3 +1,6 @@
+## use the app at url
+http://pomogo.herokuapp.com/
+
 ## Engines
 - ReactJS, Redux(thunk), HTML5, CSS3, MaterialUI, 
 - Spring Data, MySQL 
