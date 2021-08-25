@@ -3,8 +3,11 @@ import React, { useState } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import TaskView from "./TaskView";
-
 import { ThemeContext, themes } from "../../contexts/ThemeContext";
+
+import { LinearProgress } from "@material-ui/core";
+
+
 
 export const Home = () => {
 
@@ -12,8 +15,6 @@ export const Home = () => {
 	const changeTheme = (theme) => {
 		setTheme(theme);
 	}
-	const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
-	const [addTemplateOpen, setAddTemplateOpen] = useState(false);
 
 
 	return (
@@ -21,7 +22,6 @@ export const Home = () => {
 			<div className="container">
 				<div>
 					<Header />
-					<div className="header-line"></div>
 					<Main onChangeTheme={changeTheme}/>
 					<TaskView />
 				</div>

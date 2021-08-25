@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useReducer} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -34,11 +34,12 @@ export default function TaskView(props) {
 		}
 	},[setting])
 
+	const [workingTitle, setWorkingTitle] = useState("");
 	const [list, setList] = useState([]);
 	const [focusId, setFocusId] = useState(null);
 	const [formOpenId, setFormOpenId] = useState(null);
-	const [estCount, setEstCount] = useState(taskList.reduce((acc,cur) => cur.totalPomo + acc, 0) || 0);
-	const [actCount, setActCount] = useState(taskList.reduce((acc, cur) => cur.donePomo + acc, 0) || 0);
+	const [estCount, setEstCount] = useState(0);
+	const [actCount, setActCount] = useState(0);
 	const [endTime, setEndTime] = useState("");
 	const [isDialogOpen, setDialogOpen] = useState();
 	
@@ -52,13 +53,14 @@ export default function TaskView(props) {
 	useEffect(() => {
 		let mounted = true;
 		const username = userSignin?.username;
-		if (mounted === true && username?.length > 0)
+		if (mounted && username?.length > 0)
 			dispatch(listTask({username}));
 
 		return () => mounted = false;
 	}, [])
 
 	useEffect(() => {
+		let mounted = true;
 		if (tasks?.length > 0) {
 			const taskList = tasks.map(item => {
 				const url = item._links.self.href;
@@ -66,8 +68,9 @@ export default function TaskView(props) {
 				return {...item, id: id};
 			})	
 
-			setList(taskList);
+			mounted && setList(taskList);
 		}
+		return () => mounted = false;
 	}, [tasks])
 
 	// update TaskListStatus when list change
@@ -88,7 +91,8 @@ export default function TaskView(props) {
 	}, [list, pomoMinutes])	
 
 	useEffect(() => {
-		if (focusId !== null) {
+		let mounted = true
+		if (focusId !== null && mounted) {
 			setList(prev => prev.map(item => {
 				if (item.id === focusId) {
 					// save pomo number to db
@@ -98,16 +102,20 @@ export default function TaskView(props) {
 					return item;
 			}));
 		}
+		return () => mounted = false;
 	}, [taskState])
 
 	const handleOnTaskDone = (id) => {
+		setList(list.map(item => item.id === id ? {...item, done: !item.done} : item));
 		const task = list.find(item => item.id === id);
 		task && dispatch(updateTask(id, {...task, done: !task.done}));
 	}
 
 	const handleOnFocus = (id) => {
 		setFocusId(id);
-		const donePomo = list.find(item => item.id === id).donePomo;
+		const focusingItem = list.find(item => item.id === id);
+		setWorkingTitle(focusingItem?.title);
+		const donePomo = focusingItem?.donePomo;
 		donePomo && dispatch(saveDonePomo(donePomo));
 	}
 
@@ -159,7 +167,14 @@ export default function TaskView(props) {
 		closePopup();
 		clearAllTasks()
 	}
-	const clearAllTasks = () => setList([]);
+	const clearAllTasks = () => {
+		deleteAllTaskDB();
+		setList([]);
+	}
+
+	const deleteAllTaskDB = () => {
+		list.forEach(task => dispatch(deleteTask(task.id)));
+	}
 	
 	const closePopup = () => popupRef.current.close();
 
@@ -167,20 +182,40 @@ export default function TaskView(props) {
 		closePopup();
 		clearFinistTasks();
 	}
-	const clearFinistTasks = () => setList(list.filter(item => !item.done));
+	const clearFinistTasks = () => {
+		deleteFinishTasks();
+		setList(list.filter(item => !item.done));
+	}
+
+	const deleteFinishTasks = () => {
+		list.forEach(item => item.done && dispatch(deleteTask(item.id)));
+	}
 
 	const handleClearActs = () => {
 		closePopup();
 		clearActs();
 	}
-	const clearActs = () => setList(list.map(item => ({...item, donePomo: 0})));
+	const clearActs = () => {
+		setList(list.map(item => ({...item, donePomo: 0})));
+		clearActsDB();
+	}
+	const clearActsDB = () => {
+		list.forEach(task => dispatch(updateTask(task.id, {...task, donePomo: 0})));
+	}
 
+	const handleForceUpdate = () => {
+		setTimeout(() => {
+			const username = userSignin?.username;
+			if (username?.length > 0)
+				dispatch(listTask({username}));
+		}, 2000);
+	}
 
 	return (
 		<div className="task-area">
 			<div className="current-task-title">
 				<p style={{fontSize: "16px", opacity: "0.5"}}>WORKING ON</p>
-				<p>Learn by project-based</p>
+				<p>{workingTitle}</p>
 			</div>
 			<div className="task-dashboard">
 				<div className="task-header">
@@ -205,13 +240,15 @@ export default function TaskView(props) {
 									<p>Clear act pomodoros</p>
 								</div>
 								<SaveTemplateDialog onDialogOpen={() => setDialogOpen(true)} onClose={() => setDialogOpen(false)}/>
-								<AddTemplateDialog onDialogOpen={() => setDialogOpen(true)} onClose={() => setDialogOpen(false)}/>	
+								<AddTemplateDialog onDialogOpen={() => setDialogOpen(true)} onClose={() => setDialogOpen(false)}
+									onForceUpdate={handleForceUpdate}/>	
 							</div>
   					</Popup>
 					</div>
 					<hr style={{color: "white" }}></hr>
 				</div>
-				{loading ? <CircularProgress style={{color: "white"}} size="large" /> 
+				{loading ? <div style={{display: "flex", justifyContent: "center", padding: "20px 0px 20px 0px"}}>
+					<CircularProgress color="white"/></div>
 				: error ? <p>Something wrong !</p>
 				: <EditableTaskList 
 						list={list} 

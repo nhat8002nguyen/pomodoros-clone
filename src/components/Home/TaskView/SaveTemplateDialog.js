@@ -1,14 +1,19 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector} from 'react-redux';
+
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SaveIcon from '@material-ui/icons/Save';
+import { addTemplate } from '../../../redux/actions/templateActions';
 
 export default function SaveTemplateDialog(props) {
+	const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
+	const [name, setName] = React.useState("");
+
+	const { userSignin } = useSelector(state => state.userSignin);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -16,9 +21,17 @@ export default function SaveTemplateDialog(props) {
   };
 
   const handleClose = () => {
+		const username = userSignin?.username;
+		if (username?.length > 0 && name.length > 0)
+			dispatch(addTemplate(username, {
+				name: name,
+			}));		
+
     setOpen(false);
 		props.onClose()
   };
+
+	const handleCancel = () => props.onClose();
 
   return (
     <div>
@@ -33,9 +46,10 @@ export default function SaveTemplateDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle style={{fontWeight: "bold"}} id="alert-dialog-title">{"SAVE TEMPLATE"}</DialogTitle>
-        <input className="save-template-input" type="text" placeholder="Name this template"></input>
+        <input className="save-template-input" type="text" placeholder="Name this template"
+					value={name} onChange={(e) => setName(e.target.value)}></input>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleCancel} color="primary">
 						Cancel
           </Button>
           <Button onClick={handleClose} color="primary" autoFocus>

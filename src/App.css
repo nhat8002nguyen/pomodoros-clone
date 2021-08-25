@@ -116,6 +116,12 @@ body {
   padding-top: 50px;
 }
 
+.time-linear-progress {
+	background-color: white;
+	width: 100%;
+	margin-bottom: 30px;
+}
+
 .time-type-area {
   width: 400px;
   height: 300px;
@@ -747,11 +753,10 @@ form {
 	width: 500px;
 	padding-top: 10px;
 	padding-bottom: 5px;
-	cursor: pointer;
 }
 
-.add-template-item:hover {
-	background-color: rgb(209, 209, 209);
+.add-template-item p {
+	cursor: pointer;
 }
 
 .save-template-input {
