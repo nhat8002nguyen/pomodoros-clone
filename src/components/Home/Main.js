@@ -14,8 +14,9 @@ import { getSetting } from "../../redux/actions/settingActions";
 import {Flash} from './Flash'
 import { POMODORO_COLOR, SHORT_BREAK_COLOR, LONG_BREAK_COLOR, POMODORO_AREA_COLOR, SHORT_BREAK_AREA_COLOR, 
 	LONG_BREAK_AREA_COLOR } from '../../constants/windowColors';
-import {themes, ThemeContext} from "../../contexts/ThemeContext";
+import { themes } from "../../contexts/ThemeContext";
 import { incDonePomo } from "../../redux/actions/taskAction";
+import { LinearProgress } from "@material-ui/core";
 
 export default function Main({onChangeTheme}) {
 	const { t } = useTranslation();
@@ -278,6 +279,12 @@ export default function Main({onChangeTheme}) {
 
   return (
     <div className="main-container">
+			<LinearProgress variant="determinate" color="secondary" className="time-linear-progress" 
+				value={timeType === POMODOROS 
+					? Math.floor(100 - time/pomodoro * 100) 
+					: timeType === SHORT_BREAK 
+						? Math.floor(100 - time/shortBreak * 100) 
+						: Math.floor(100 - time/longBreak * 100)}/>
 			{loading ? <Flash />
       :<div className="time-type-area" style={{ backgroundColor: midAreaColor }}>
         <div className="time-type-group">

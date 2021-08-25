@@ -22,7 +22,8 @@ export const listTask = ({username}) => async(dispatch, getState) => {
 		const userId = data1.id;
 
 		const { data: { _embedded: { tasks } } } = await axios.get(`/api/users/${userId}/tasks`);
-		dispatch({type: TASK_LIST_SUCCESS, payload: tasks});
+		const sortedTask = tasks?.sort((a, b) => a.createdAt > b.createdAt);
+		dispatch({type: TASK_LIST_SUCCESS, payload: sortedTask});
 	} catch (error) {
 		dispatch({type: TASK_LIST_FAIL, payload: error.message})
 	}
