@@ -1,4 +1,4 @@
-## use the app at url
+## Use the app at url
 http://pomogo.herokuapp.com/
 
 ## Engines
