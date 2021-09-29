@@ -7,7 +7,7 @@ http://pomogo.herokuapp.com/
 - AWS Service: Elastic Beanstalk, RDS
 
 ## Demo app
-https://www.youtube.com/watch?v=goV6BjWYIIM&t=14s&ab_channel=NhatNguyen
+https://www.youtube.com/watch?v=cPbVCECQr1U&ab_channel=NhatNguyen
 
 ## UI
 ### PC
