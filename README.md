@@ -9,6 +9,12 @@ http://pomogo.herokuapp.com/
 ## Demo app
 https://www.youtube.com/watch?v=cPbVCECQr1U&ab_channel=NhatNguyen
 
+## Run local
+### step1: install nodejs, npm, yarn
+### In the root of project run: $ yarn install
+### Run app: $ yarn start
+### App in localhost:3000
+
 ## UI
 ### PC
 ![Screenshot (17)](https://user-images.githubusercontent.com/58263449/130754866-a145b30a-4220-4192-be0a-ac86bf9f805f.png)
